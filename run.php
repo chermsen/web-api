@@ -10,6 +10,21 @@ $api = new \Myracloud\WebApi\WebApi(
     'beta.myracloud.com'
 );
 
+$redirect = $api->getRedirectEndpoint();
+$data = $redirect->getList('example.org');
+var_dump($data);
+foreach ($data['list'] as $item) {
+    if ($item['subDomainName'] == 'example.org') {
+        var_dump($redirect->update('', $item['id'], new DateTime($item['modified'])));
+    }
+}
+
+
+
+#var_dump($redirect->create('example.org', '/horst', '/fritz'));
+
+
+/*
 $domain = $api->getDomainEndpoint();
 
 $data = $domain->getList();
@@ -18,8 +33,7 @@ foreach ($data['list'] as $item) {
     if ($item['name'] == 'example.org') {
         var_dump($domain->update($item['id'], new DateTime($item['modified']), true));
     }
-}
-
+}*/
 
 
 #18174

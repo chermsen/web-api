@@ -3,48 +3,15 @@ declare(strict_types=1);
 
 namespace Myracloud\WebApi\Endpoint;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 
 /**
  * Class Redirect
  * @package Myracloud\WebApi\Endpoint
  */
-class Redirect
+class Redirect extends AbstractEndpoint
 {
-    /**
-     * HTTP 301
-     */
-    const REDIRECT_TYPE_PERMANENT = 'permanent';
-    /**
-     * HTTP 302
-     */
-    const REDIRECT_TYPE_REDIRECT = 'redirect';
-
-    const MATCHING_TYPE_PREFIX = 'prefix';
-    const MATCHING_TYPE_SUFFIX = 'suffix';
-    const MATCHING_TYPE_EXACT = 'exact';
-    /**
-     * @var Client
-     */
-    protected $client;
-    /**
-     * @var string
-     */
-    protected $uri;
-
-    /**
-     * Domain constructor.
-     * @param Client $client
-     */
-    public function __construct(Client $client)
-    {
-        /** @var Uri $basUri */
-        $basUri = $client->getConfig('base_uri');
-        $this->client = $client;
-        $this->uri = (string)$basUri->withPath($basUri->getPath() . '/redirects');
-    }
+    protected $epName = 'redirects';
 
     public function getList($domain, int $page = 1)
     {
@@ -103,14 +70,38 @@ class Redirect
         return json_decode($res->getBody()->getContents(), true);
     }
 
-    public function update($domain, $id, $modified)
-    {
+    public function update(
+        $domain,
+        $id,
+        \DateTime $modified,
+        $source,
+        $destination,
+        $type = self::REDIRECT_TYPE_REDIRECT,
+        $matchingType = self::MATCHING_TYPE_PREFIX,
+        $expertMode = false
+    ) {
 
         $uri = $this->uri . '/' . $domain;
 
+        if (!in_array($type, [
+            self::REDIRECT_TYPE_PERMANENT,
+            self::REDIRECT_TYPE_REDIRECT,
+        ])) {
+            throw new \Exception('Unknown Redirect Type.');
+        }
+
+        if (!in_array($matchingType, [
+            self::MATCHING_TYPE_EXACT,
+            self::MATCHING_TYPE_PREFIX,
+            self::MATCHING_TYPE_SUFFIX,
+        ])) {
+            throw new \Exception('Unknown Matching Type.');
+        }
 
         $options[RequestOptions::JSON] =
             [
+                "id" => $id,
+                'modified' => $modified->format('c'),
                 "source" => $source,
                 "destination" => $destination,
                 "type" => $type,
@@ -122,5 +113,27 @@ class Redirect
         $res = $this->client->request('POST', $uri, $options);
         return json_decode($res->getBody()->getContents(), true);
 
+    }
+
+    /**
+     * @param $domain
+     * @param $id
+     * @param $modified
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function delete($domain, $id, $modified)
+    {
+        $uri = $this->uri . '/' . $domain;
+
+        $options[RequestOptions::JSON] =
+            [
+                'id' => $id,
+                'modified' => $modified->format('c')
+            ];
+
+        /** @var \GuzzleHttp\Psr7\Request $res */
+        $res = $this->client->request('DELETE', $uri, $options);
+        return json_decode($res->getBody()->getContents(), true);
     }
 }

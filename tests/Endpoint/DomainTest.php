@@ -3,27 +3,27 @@ declare(strict_types=1);
 
 namespace Myracloud\Tests\Endpoint;
 
-
 use Myracloud\WebApi\Endpoint\Domain;
 
+/**
+ * Class DomainTest
+ * @package Myracloud\Tests\Endpoint
+ */
 class DomainTest extends AbstractEndpointTest
 {
-    /** @var Domain */
+    /**
+     * @var Domain
+     */
     protected $domainEndpoint;
 
-    public function setUp()
-    {
-        parent::setUp();
-        $this->domainEndpoint = $this->Api->getDomainEndpoint();
-        $this->assertThat($this->domainEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\Domain'));
-    }
-
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function testUpdate()
     {
-        $testDomain = 'myratest.org';
         $list = $this->domainEndpoint->getList();
         foreach ($list['list'] as $item) {
-            if ($item['name'] == $testDomain) {
+            if ($item['name'] == $this->testDomain) {
                 $oldValue = $item['autoUpdate'];
                 $result = $this->domainEndpoint->update(
                     $item['id'],
@@ -35,9 +35,55 @@ class DomainTest extends AbstractEndpointTest
         }
     }
 
+    /**
+     *
+     */
+    public function testGetList()
+    {
+        $result = $this->domainEndpoint->getList();
+var_dump($result);
+        $this->verifyListResult($result);
+    }
+
+    /**
+     *
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        $this->domainEndpoint = $this->Api->getDomainEndpoint();
+        $this->assertThat($this->domainEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\Domain'));
+    }
+
+    public function testDeleteCreate()
+    {
+        $this->testDelete();
+        $this->testCreate();
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+
+        $list = $this->domainEndpoint->getList();
+        foreach ($list['list'] as $item) {
+            if ($item['name'] == $this->testDomain) {
+                $result = $this->domainEndpoint->delete(
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
+            }
+        }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function testCreate()
     {
-        $testDomain = 'myratest.org';
         $objectFields = [
             'objectType',
             'id',
@@ -48,14 +94,14 @@ class DomainTest extends AbstractEndpointTest
             'maintenance',
             'paused',
             'owned',
-            'dnsRecord',
+            'dnsRecords',
             'reversed',
             'environment'
         ];
 
-        $result = $this->domainEndpoint->create($testDomain);
+        $result = $this->domainEndpoint->create($this->testDomain);
 
-        $this->assertMyraNoError($result);
+        $this->verifyNoError($result);
 
         $this->assertArrayHasKey('targetObject', $result);
 
@@ -70,44 +116,10 @@ class DomainTest extends AbstractEndpointTest
 
 
         $this->assertEquals('DomainVO', $result['targetObject'][0]['objectType']);
-        $this->assertEquals($testDomain, $result['targetObject'][0]['name']);
+        $this->assertEquals($this->testDomain, $result['targetObject'][0]['name']);
 
 
         var_dump($result);
-    }
-
-    public function testGetList()
-    {
-
-        $result = $this->domainEndpoint->getList();
-
-        $this->assertMyraNoError($result);
-
-        $this->assertArrayHasKey('page', $result);
-        $this->assertEquals(1, $result['page']);
-
-
-        $this->assertArrayHasKey('list', $result);
-        $this->assertIsArray($result['list']);
-
-
-        $this->assertArrayHasKey('count', $result);
-        $this->assertEquals(count($result['list']), $result['count']);
-    }
-
-    public function testDelete()
-    {
-        $testDomain = 'myratest.org';
-        $list = $this->domainEndpoint->getList();
-        foreach ($list['list'] as $item) {
-            if ($item['name'] == $testDomain) {
-                $result = $this->domainEndpoint->delete(
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->assertMyraNoError($result);
-            }
-        }
     }
 
 

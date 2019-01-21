@@ -3,36 +3,18 @@ declare(strict_types=1);
 
 namespace Myracloud\WebApi\Endpoint;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 
 /**
  * Class Domain
  * @package Myracloud\WebApi\Endpoint
  */
-class Domain
+class Domain extends AbstractEndpoint
 {
-    /**
-     * @var Client
-     */
-    protected $client;
     /**
      * @var string
      */
-    protected $uri;
-
-    /**
-     * Domain constructor.
-     * @param Client $client
-     */
-    public function __construct(Client $client)
-    {
-        /** @var Uri $basUri */
-        $basUri = $client->getConfig('base_uri');
-        $this->client = $client;
-        $this->uri = (string)$basUri->withPath($basUri->getPath() . '/domains');
-    }
+    protected $epName = 'domains';
 
     /**
      * @return mixed
