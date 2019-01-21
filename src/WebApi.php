@@ -8,6 +8,7 @@ use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Myracloud\WebApi\Endpoint\Domain;
+use Myracloud\WebApi\Endpoint\Redirect;
 use Myracloud\WebApi\Middleware\Signature;
 use Psr\Http\Message\RequestInterface;
 
@@ -99,4 +100,16 @@ class WebApi
         return $this->endpointCache['domain'];
 
     }
+
+    /**
+     * @return Redirect
+     */
+    public function getRedirectEndpoint()
+    {
+        if (!array_key_exists('redirect', $this->endpointCache)) {
+            $this->endpointCache['redirect'] = new Redirect($this->client);
+        }
+        return $this->endpointCache['redirect'];
+    }
+
 }

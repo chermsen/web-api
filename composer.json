@@ -1,7 +1,10 @@
 {
   "name": "myra-security-gmbh/web-api",
   "description": "",
-  "keywords": ["myracloud", "api"],
+  "keywords": [
+    "myracloud",
+    "api"
+  ],
   "homepage": "https://myracloud.com",
   "type": "library",
   "license": "MIT",
@@ -11,9 +14,17 @@
     "ext-json": "*",
     "guzzlehttp/guzzle": "^6.0"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  },
   "autoload": {
     "psr-4": {
       "Myracloud\\WebApi\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Myracloud\\Tests\\": "tests/"
     }
   }
 }
