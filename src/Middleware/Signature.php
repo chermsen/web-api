@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Myracloud\WebApi\Authentication;
+namespace Myracloud\WebApi\Middleware;
 
 use Psr\Http\Message\RequestInterface;
 

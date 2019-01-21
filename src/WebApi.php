@@ -7,7 +7,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use Myracloud\WebApi\Authentication\Signature;
+use Myracloud\WebApi\Endpoint\Domain;
+use Myracloud\WebApi\Middleware\Signature;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -33,18 +34,22 @@ class WebApi
      */
     protected $lang = 'en';
     /**
-     * @var Client|null
+     * @var Client
      */
-    protected $client = null;
+    protected $client;
+    /**
+     * @var array
+     */
+    private $endpointCache = [];
 
     /**
      * WebApi constructor.
      * @param $apiKey
      * @param $secret
-     * @param null $lang
      * @param null $site
+     * @param array $connectionConfig
      */
-    public function __construct($apiKey, $secret, $lang = null, $site = null, $connectionConfig = [])
+    public function __construct($apiKey, $secret, $site = null, $lang = 'en', $connectionConfig = [])
     {
         $this->apiKey = $apiKey;
         $this->secret = $secret;
@@ -59,11 +64,12 @@ class WebApi
         $stack = new HandlerStack();
         $stack->setHandler(new CurlHandler());
 
-        $stack->push(Middleware::prepareBody());
+        $signature = new Signature($secret, $apiKey);
+
+        #$stack->push(Middleware::prepareBody());
         $stack->push(
             Middleware::mapRequest(
-                function (RequestInterface $request) use ($secret, $apiKey) {
-                    $signature = new Signature($secret, $apiKey);
+                function (RequestInterface $request) use ($signature) {
                     return $signature->signRequest($request);
                 }
             )
@@ -73,7 +79,7 @@ class WebApi
         $client = new Client(
             array_merge(
                 [
-                    'base_uri' => $this->site,
+                    'base_uri' => 'https://' . $this->site . '/' . $this->lang . '/rapi',
                     'handler' => $stack
                 ],
                 $connectionConfig
@@ -82,8 +88,15 @@ class WebApi
         $this->client = $client;
     }
 
-    public function getClient()
+    /**
+     * @return Domain
+     */
+    public function getDomainEndpoint()
     {
-        return $this->client;
+        if (!array_key_exists('domain', $this->endpointCache)) {
+            $this->endpointCache['domain'] = new Domain($this->client);
+        }
+        return $this->endpointCache['domain'];
+
     }
 }
