@@ -29,7 +29,7 @@ abstract class AbstractEndpointTest extends TestCase
     {
         $config = new config();
         $config = $config->get();
-        $this->Api = new \Myracloud\WebApi\WebApi(
+        $this->Api = new WebApi(
             $config['apiKey'],
             $config['secret'],
             'beta.myracloud.com'
@@ -38,6 +38,9 @@ abstract class AbstractEndpointTest extends TestCase
 
     }
 
+    /**
+     * @param $result
+     */
     protected function verifyListResult($result)
     {
         $this->verifyNoError($result);

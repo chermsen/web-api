@@ -11,8 +11,16 @@ use GuzzleHttp\RequestOptions;
  */
 class Redirect extends AbstractEndpoint
 {
+    /**
+     * @var string
+     */
     protected $epName = 'redirects';
 
+    /**
+     * @param $domain
+     * @param int $page
+     * @return mixed
+     */
     public function getList($domain, int $page = 1)
     {
         $uri = $this->uri . '/' . $domain . '/' . $page;
@@ -42,20 +50,11 @@ class Redirect extends AbstractEndpoint
     ) {
         $uri = $this->uri . '/' . $domain;
 
-        if (!in_array($type, [
-            self::REDIRECT_TYPE_PERMANENT,
-            self::REDIRECT_TYPE_REDIRECT,
-        ])) {
-            throw new \Exception('Unknown Redirect Type.');
-        }
+        $this->validateRedirectType($type);
 
-        if (!in_array($matchingType, [
-            self::MATCHING_TYPE_EXACT,
-            self::MATCHING_TYPE_PREFIX,
-            self::MATCHING_TYPE_SUFFIX,
-        ])) {
-            throw new \Exception('Unknown Matching Type.');
-        }
+        $this->validateMatchingType($matchingType);
+
+
         $options[RequestOptions::JSON] =
             [
                 "source" => $source,
@@ -70,6 +69,18 @@ class Redirect extends AbstractEndpoint
         return json_decode($res->getBody()->getContents(), true);
     }
 
+    /**
+     * @param $domain
+     * @param $id
+     * @param \DateTime $modified
+     * @param $source
+     * @param $destination
+     * @param string $type
+     * @param string $matchingType
+     * @param bool $expertMode
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function update(
         $domain,
         $id,
@@ -83,20 +94,9 @@ class Redirect extends AbstractEndpoint
 
         $uri = $this->uri . '/' . $domain;
 
-        if (!in_array($type, [
-            self::REDIRECT_TYPE_PERMANENT,
-            self::REDIRECT_TYPE_REDIRECT,
-        ])) {
-            throw new \Exception('Unknown Redirect Type.');
-        }
+        $this->validateRedirectType($type);
 
-        if (!in_array($matchingType, [
-            self::MATCHING_TYPE_EXACT,
-            self::MATCHING_TYPE_PREFIX,
-            self::MATCHING_TYPE_SUFFIX,
-        ])) {
-            throw new \Exception('Unknown Matching Type.');
-        }
+        $this->validateMatchingType($matchingType);
 
         $options[RequestOptions::JSON] =
             [
@@ -115,25 +115,5 @@ class Redirect extends AbstractEndpoint
 
     }
 
-    /**
-     * @param $domain
-     * @param $id
-     * @param $modified
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function delete($domain, $id, $modified)
-    {
-        $uri = $this->uri . '/' . $domain;
 
-        $options[RequestOptions::JSON] =
-            [
-                'id' => $id,
-                'modified' => $modified->format('c')
-            ];
-
-        /** @var \GuzzleHttp\Psr7\Request $res */
-        $res = $this->client->request('DELETE', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
-    }
 }

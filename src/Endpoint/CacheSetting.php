@@ -6,8 +6,15 @@ namespace Myracloud\WebApi\Endpoint;
 
 use GuzzleHttp\RequestOptions;
 
+/**
+ * Class CacheSetting
+ * @package Myracloud\WebApi\Endpoint
+ */
 class CacheSetting extends AbstractEndpoint
 {
+    /**
+     * @var string
+     */
     protected $epName = 'cacheSettings';
 
     /**
@@ -41,13 +48,8 @@ class CacheSetting extends AbstractEndpoint
         $uri = $this->uri . '/' . $domain;
 
 
-        if (!in_array($type, [
-            self::MATCHING_TYPE_EXACT,
-            self::MATCHING_TYPE_PREFIX,
-            self::MATCHING_TYPE_SUFFIX,
-        ])) {
-            throw new \Exception('Unknown Matching Type.');
-        }
+        $this->validateMatchingType($type);
+
         $options[RequestOptions::JSON] =
             [
                 "path" => $path,
@@ -60,29 +62,17 @@ class CacheSetting extends AbstractEndpoint
         return json_decode($res->getBody()->getContents(), true);
     }
 
+
     /**
      * @param $domain
      * @param $id
-     * @param $modified
+     * @param \DateTime $modified
+     * @param $path
+     * @param $ttl
+     * @param string $type
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function delete($domain, $id, $modified)
-    {
-        $uri = $this->uri . '/' . $domain;
-
-        $options[RequestOptions::JSON] =
-            [
-                'id' => $id,
-                'modified' => $modified->format('c')
-            ];
-
-        /** @var \GuzzleHttp\Psr7\Request $res */
-        $res = $this->client->request('DELETE', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
-    }
-
-
     public function update(
         $domain,
         $id,
@@ -94,13 +84,8 @@ class CacheSetting extends AbstractEndpoint
 
         $uri = $this->uri . '/' . $domain;
 
-        if (!in_array($type, [
-            self::MATCHING_TYPE_EXACT,
-            self::MATCHING_TYPE_PREFIX,
-            self::MATCHING_TYPE_SUFFIX,
-        ])) {
-            throw new \Exception('Unknown Matching Type.');
-        }
+
+        $this->validateMatchingType($type);
 
         $options[RequestOptions::JSON] =
             [
@@ -114,6 +99,7 @@ class CacheSetting extends AbstractEndpoint
         /** @var \GuzzleHttp\Psr7\Request $res */
         $res = $this->client->request('POST', $uri, $options);
         return json_decode($res->getBody()->getContents(), true);
-
     }
+
+
 }

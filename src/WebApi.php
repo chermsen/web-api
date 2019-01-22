@@ -8,6 +8,7 @@ use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Myracloud\WebApi\Endpoint\CacheSetting;
+use Myracloud\WebApi\Endpoint\DnsRecord;
 use Myracloud\WebApi\Endpoint\Domain;
 use Myracloud\WebApi\Endpoint\Redirect;
 use Myracloud\WebApi\Middleware\Signature;
@@ -77,7 +78,6 @@ class WebApi
             )
         );
 
-
         $client = new Client(
             array_merge(
                 [
@@ -125,6 +125,18 @@ class WebApi
             $this->endpointCache['cachesettings'] = new CacheSetting($this->client);
         }
         return $this->endpointCache['cachesettings'];
+    }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getDnsRecordEndpoint()
+    {
+        if (!array_key_exists('dnsrecord', $this->endpointCache)) {
+            $this->endpointCache['dnsrecord'] = new DnsRecord($this->client);
+        }
+        return $this->endpointCache['dnsrecord'];
     }
 
 }

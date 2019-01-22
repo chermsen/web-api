@@ -17,6 +17,9 @@ class CacheSettingTest extends AbstractEndpointTest
      * @var string
      */
     protected $testPath = '/testPath';
+    /**
+     * @var string
+     */
     protected $testPath2 = '/test';
 
     /**
@@ -30,14 +33,14 @@ class CacheSettingTest extends AbstractEndpointTest
     }
 
     /**
-     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testGetList()
+    public function testSequence()
     {
-        $result = $this->cacheSettingsEndpoint->getList($this->testDomain);
-        $this->verifyListResult($result);
-        var_dump($result);
-        var_export(array_keys($result['list'][0]));
+        $this->testCreate();
+        $this->testUpdate();
+        $this->testGetList();
+        $this->testDelete();
     }
 
     /**
@@ -81,24 +84,9 @@ class CacheSettingTest extends AbstractEndpointTest
 
     }
 
-
-    public function testDelete()
-    {
-        $list = $this->cacheSettingsEndpoint->getList($this->testDomain);
-        foreach ($list['list'] as $item) {
-            if ($item['path'] == $this->testPath
-                || $item['path'] == $this->testPath2
-            ) {
-                $result = $this->cacheSettingsEndpoint->delete(
-                    $this->testDomain,
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->verifyNoError($result);
-            }
-        }
-    }
-
+    /**
+     * @throws \Exception
+     */
     public function testUpdate()
     {
         $list = $this->cacheSettingsEndpoint->getList($this->testDomain);
@@ -121,9 +109,34 @@ class CacheSettingTest extends AbstractEndpointTest
         }
     }
 
-    public function testSequence(){
-        $this->testCreate();
-        $this->testUpdate();
-        $this->testDelete();
+    /**
+     *
+     */
+    public function testGetList()
+    {
+        $result = $this->cacheSettingsEndpoint->getList($this->testDomain);
+        $this->verifyListResult($result);
+        var_dump($result);
+        var_export(array_keys($result['list'][0]));
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+        $list = $this->cacheSettingsEndpoint->getList($this->testDomain);
+        foreach ($list['list'] as $item) {
+            if ($item['path'] == $this->testPath
+                || $item['path'] == $this->testPath2
+            ) {
+                $result = $this->cacheSettingsEndpoint->delete(
+                    $this->testDomain,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
+            }
+        }
     }
 }

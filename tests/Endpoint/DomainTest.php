@@ -41,7 +41,7 @@ class DomainTest extends AbstractEndpointTest
     public function testGetList()
     {
         $result = $this->domainEndpoint->getList();
-var_dump($result);
+        var_dump($result);
         $this->verifyListResult($result);
     }
 
@@ -53,12 +53,6 @@ var_dump($result);
         parent::setUp();
         $this->domainEndpoint = $this->Api->getDomainEndpoint();
         $this->assertThat($this->domainEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\Domain'));
-    }
-
-    public function testDeleteCreate()
-    {
-        $this->testDelete();
-        $this->testCreate();
     }
 
     /**
@@ -122,5 +116,14 @@ var_dump($result);
         var_dump($result);
     }
 
-
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testSequence()
+    {
+        $this->testCreate();
+        $this->testUpdate();
+        $this->testGetList();
+        $this->testDelete();
+    }
 }

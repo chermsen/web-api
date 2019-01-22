@@ -11,7 +11,6 @@ use Myracloud\WebApi\Endpoint\Redirect;
  */
 class RedirectTest extends AbstractEndpointTest
 {
-
     /**
      * @var Redirect
      */
@@ -20,10 +19,12 @@ class RedirectTest extends AbstractEndpointTest
      * @var string
      */
     protected $redirSource = '/test_source';
+    protected $redirSource2 = '/test_source_changed';
     /**
      * @var string
      */
     protected $redirDest = '/test_dest';
+    protected $redirDest2 = '/test_destination_changed';
 
     /**
      *
@@ -35,13 +36,20 @@ class RedirectTest extends AbstractEndpointTest
         $this->assertThat($this->redirectEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\Redirect'));
     }
 
-    public function testGetList()
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testSequence()
     {
-        $result = $this->redirectEndpoint->getList($this->testDomain);
-        $this->verifyListResult($result);
-        var_dump($result);
+        $this->testCreate();
+        $this->testUpdate();
+        $this->testGetList();
+        $this->testDelete();
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function testCreate()
     {
         $objectFields = array(
@@ -80,6 +88,9 @@ class RedirectTest extends AbstractEndpointTest
     }
 
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function testUpdate()
     {
         $list = $this->redirectEndpoint->getList($this->testDomain);
@@ -88,16 +99,48 @@ class RedirectTest extends AbstractEndpointTest
                 $res = $this->redirectEndpoint->update(
                     $this->testDomain, $item['id'],
                     new \DateTime($item['modified']),
-                    '/test_source_changed',
-                    '/test_destination_changed'
+                    $this->redirSource2,
+                    $this->redirDest2
                 );
                 $this->assertArrayHasKey('targetObject', $res);
                 $this->assertEquals(1, count($res['targetObject']));
                 $this->assertArrayHasKey('source', $res['targetObject']);
-                $this->assertEquals('/test_source_changed', $res['targetObject']['source']);
+                $this->assertEquals($this->redirSource2, $res['targetObject']['source']);
                 $this->assertArrayHasKey('destination', $res['targetObject']);
-                $this->assertEquals('/test_destination_changed', $res['targetObject']['destination']);
+                $this->assertEquals($this->redirDest2, $res['targetObject']['destination']);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public function testGetList()
+    {
+        $result = $this->redirectEndpoint->getList($this->testDomain);
+        $this->verifyListResult($result);
+        var_dump($result);
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+        $list = $this->redirectEndpoint->getList($this->testDomain);
+        foreach ($list['list'] as $item) {
+            if (
+                $item['source'] == $this->redirSource
+                || $item['source'] == $this->redirSource2
+            ) {
+                $result = $this->redirectEndpoint->delete(
+                    $this->testDomain,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
             }
         }
     }
 }
+
