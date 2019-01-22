@@ -7,8 +7,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use Myracloud\WebApi\Endpoint\CacheSetting;
-use Myracloud\WebApi\Endpoint\DnsRecord;
 use Myracloud\WebApi\Endpoint\Domain;
 use Myracloud\WebApi\Endpoint\Redirect;
 use Myracloud\WebApi\Middleware\Signature;
@@ -50,6 +48,7 @@ class WebApi
      * @param $apiKey
      * @param $secret
      * @param null $site
+     * @param string $lang
      * @param array $connectionConfig
      */
     public function __construct($apiKey, $secret, $site = null, $lang = 'en', $connectionConfig = [])
@@ -96,11 +95,21 @@ class WebApi
      */
     public function getDomainEndpoint()
     {
-        if (!array_key_exists('domain', $this->endpointCache)) {
-            $this->endpointCache['domain'] = new Domain($this->client);
-        }
-        return $this->endpointCache['domain'];
+        return $this->getInstance('Domain');
 
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    private function getInstance($name)
+    {
+        if (!array_key_exists($name, $this->endpointCache)) {
+            $classname = 'Myracloud\WebApi\Endpoint\\'.$name;
+            $this->endpointCache[$name] = new $classname($this->client);
+        }
+        return $this->endpointCache[$name];
     }
 
     /**
@@ -109,10 +118,7 @@ class WebApi
      */
     public function getRedirectEndpoint()
     {
-        if (!array_key_exists('redirect', $this->endpointCache)) {
-            $this->endpointCache['redirect'] = new Redirect($this->client);
-        }
-        return $this->endpointCache['redirect'];
+        return $this->getInstance('Redirect');
     }
 
     /**
@@ -121,10 +127,7 @@ class WebApi
      */
     public function getCacheSettingsEndpoint()
     {
-        if (!array_key_exists('cachesettings', $this->endpointCache)) {
-            $this->endpointCache['cachesettings'] = new CacheSetting($this->client);
-        }
-        return $this->endpointCache['cachesettings'];
+        return $this->getInstance('CacheSetting');
     }
 
     /**
@@ -133,10 +136,26 @@ class WebApi
      */
     public function getDnsRecordEndpoint()
     {
-        if (!array_key_exists('dnsrecord', $this->endpointCache)) {
-            $this->endpointCache['dnsrecord'] = new DnsRecord($this->client);
-        }
-        return $this->endpointCache['dnsrecord'];
+        return $this->getInstance('DnsRecord');
     }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getStatisticEndpoint()
+    {
+        return $this->getInstance('Statistic');
+    }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getMaintenanceEndpoint()
+    {
+        return $this->getInstance('Maintenance');
+    }
+
 
 }

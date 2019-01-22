@@ -5,6 +5,10 @@ namespace Myracloud\WebApi\Endpoint;
 
 use Myracloud\Tests\Endpoint\AbstractEndpointTest;
 
+/**
+ * Class DnsRecordTest
+ * @package Myracloud\WebApi\Endpoint
+ */
 class DnsRecordTest extends AbstractEndpointTest
 {
     /** @var DnsRecord */
@@ -22,6 +26,7 @@ class DnsRecordTest extends AbstractEndpointTest
         $this->dnsRecordEndpoint = $this->Api->getDnsRecordEndpoint();
         $this->assertThat($this->dnsRecordEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\DnsRecord'));
     }
+
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -32,27 +37,6 @@ class DnsRecordTest extends AbstractEndpointTest
         $this->testGetList();
         $this->testGetListFiltered();
         $this->testDelete();
-    }
-    /**
-     *
-     */
-    public function testGetList()
-    {
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain);
-        $this->verifyListResult($result);
-        var_dump($result);
-        #  var_export(array_keys($result['list'][0]));
-    }
-
-    public function testGetListFiltered()
-    {
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, 'sub');
-        var_dump($result);
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, DnsRecord::DNS_TYPE_A);
-        var_dump($result);
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, null, true);
-        var_dump($result);
-        #  var_export(array_keys($result['list'][0]));
     }
 
     /**
@@ -107,29 +91,6 @@ class DnsRecordTest extends AbstractEndpointTest
         }
     }
 
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testDelete()
-    {
-        $list = $this->dnsRecordEndpoint->getList($this->testDomain);
-        foreach ($list['list'] as $item) {
-            if (
-                $item['name'] == $this->subDomain . '.' . $this->testDomain
-                || $item['name'] == $this->subDomain2 . '.' . $this->testDomain
-            ) {
-                $result = $this->dnsRecordEndpoint->delete(
-                    $this->testDomain,
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->verifyNoError($result);
-            }
-        }
-    }
-
-
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -164,6 +125,54 @@ class DnsRecordTest extends AbstractEndpointTest
 
                 $this->assertArrayHasKey('active', $res['targetObject'][0]);
                 $this->assertEquals(false, $res['targetObject'][0]['active']);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public function testGetList()
+    {
+        $result = $this->dnsRecordEndpoint->getList($this->testDomain);
+        $this->verifyListResult($result);
+        var_dump($result);
+        #  var_export(array_keys($result['list'][0]));
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function testGetListFiltered()
+    {
+        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, 'sub');
+        var_dump($result);
+        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, DnsRecord::DNS_TYPE_A);
+        var_dump($result);
+        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, null, true);
+        var_dump($result);
+        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, null, false, true);
+        var_dump($result);
+        #  var_export(array_keys($result['list'][0]));
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+        $list = $this->dnsRecordEndpoint->getList($this->testDomain);
+        foreach ($list['list'] as $item) {
+            if (
+                $item['name'] == $this->subDomain . '.' . $this->testDomain
+                || $item['name'] == $this->subDomain2 . '.' . $this->testDomain
+            ) {
+                $result = $this->dnsRecordEndpoint->delete(
+                    $this->testDomain,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
             }
         }
     }

@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Myracloud\WebApi\Endpoint;
 
-
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Psr7\Response as ResponseAlias;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\RequestOptions;
 
@@ -23,17 +24,8 @@ abstract class AbstractEndpoint
      */
     const REDIRECT_TYPE_REDIRECT = 'redirect';
 
-    /**
-     *
-     */
     const MATCHING_TYPE_PREFIX = 'prefix';
-    /**
-     *
-     */
     const MATCHING_TYPE_SUFFIX = 'suffix';
-    /**
-     *
-     */
     const MATCHING_TYPE_EXACT = 'exact';
 
     const DNS_TYPE_A = 'A';
@@ -82,7 +74,7 @@ abstract class AbstractEndpoint
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function delete($domain, $id, $modified)
+    public function delete($domain, $id, \DateTime $modified)
     {
         $uri = $this->uri . '/' . $domain;
 
@@ -92,9 +84,23 @@ abstract class AbstractEndpoint
                 'modified' => $modified->format('c')
             ];
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('DELETE', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
+    }
+
+    /**
+     * @param ResponseAlias $response
+     * @return mixed
+     */
+    protected function handleResponse(ResponseAlias $response)
+    {
+        if ($response->getStatusCode() != 200) {
+            throw new TransferException(
+                'Invalid Response. ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase()
+            );
+        }
+        return \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
     }
 
     /**
@@ -146,5 +152,4 @@ abstract class AbstractEndpoint
             throw new \Exception('Unknown Record Type.');
         }
     }
-
 }

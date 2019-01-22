@@ -25,9 +25,9 @@ class Redirect extends AbstractEndpoint
     {
         $uri = $this->uri . '/' . $domain . '/' . $page;
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->get($uri);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 
     /**
@@ -64,9 +64,9 @@ class Redirect extends AbstractEndpoint
                 "expertMode" => $expertMode
             ];
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 
     /**
@@ -109,11 +109,10 @@ class Redirect extends AbstractEndpoint
                 "expertMode" => $expertMode
             ];
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
 
     }
-
 
 }

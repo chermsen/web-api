@@ -21,9 +21,9 @@ class Domain extends AbstractEndpoint
      */
     public function getList()
     {
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->get($this->uri);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 
     /**
@@ -40,18 +40,19 @@ class Domain extends AbstractEndpoint
                 'autoUpdate' => $autoUpdate
             ];
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $this->uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 
     /**
+     * @param $domain
      * @param $id
-     * @param \DateTime $modified
+     * @param $modified
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function delete($id, \DateTime $modified)
+    public function delete($domain, $id, \DateTime $modified)
     {
         $options[RequestOptions::JSON] =
             [
@@ -59,9 +60,9 @@ class Domain extends AbstractEndpoint
                 'modified' => $modified->format('c')
             ];
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('DELETE', $this->uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 
     /**
@@ -80,8 +81,8 @@ class Domain extends AbstractEndpoint
                 'autoUpdate' => $autoUpdate,
             ];
 
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $this->uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 }

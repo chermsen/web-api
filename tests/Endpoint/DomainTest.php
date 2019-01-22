@@ -17,35 +17,6 @@ class DomainTest extends AbstractEndpointTest
     protected $domainEndpoint;
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testUpdate()
-    {
-        $list = $this->domainEndpoint->getList();
-        foreach ($list['list'] as $item) {
-            if ($item['name'] == $this->testDomain) {
-                $oldValue = $item['autoUpdate'];
-                $result = $this->domainEndpoint->update(
-                    $item['id'],
-                    new \DateTime($item['modified']),
-                    !$item['autoUpdate']
-                );
-                $this->assertNotEquals($oldValue, $result['targetObject'][0]['autoUpdate']);
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    public function testGetList()
-    {
-        $result = $this->domainEndpoint->getList();
-        var_dump($result);
-        $this->verifyListResult($result);
-    }
-
-    /**
      *
      */
     public function setUp()
@@ -58,19 +29,12 @@ class DomainTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testDelete()
+    public function testSequence()
     {
-
-        $list = $this->domainEndpoint->getList();
-        foreach ($list['list'] as $item) {
-            if ($item['name'] == $this->testDomain) {
-                $result = $this->domainEndpoint->delete(
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->verifyNoError($result);
-            }
-        }
+        $this->testCreate();
+        $this->testUpdate();
+        $this->testGetList();
+        $this->testDelete();
     }
 
     /**
@@ -108,10 +72,8 @@ class DomainTest extends AbstractEndpointTest
             $this->assertArrayHasKey($field, $result['targetObject'][0]);
         }
 
-
         $this->assertEquals('DomainVO', $result['targetObject'][0]['objectType']);
         $this->assertEquals($this->testDomain, $result['targetObject'][0]['name']);
-
 
         var_dump($result);
     }
@@ -119,11 +81,47 @@ class DomainTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testSequence()
+    public function testUpdate()
     {
-        $this->testCreate();
-        $this->testUpdate();
-        $this->testGetList();
-        $this->testDelete();
+        $list = $this->domainEndpoint->getList();
+        foreach ($list['list'] as $item) {
+            if ($item['name'] == $this->testDomain) {
+                $oldValue = $item['autoUpdate'];
+                $result = $this->domainEndpoint->update(
+                    $item['id'],
+                    new \DateTime($item['modified']),
+                    !$item['autoUpdate']
+                );
+                $this->assertNotEquals($oldValue, $result['targetObject'][0]['autoUpdate']);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public function testGetList()
+    {
+        $result = $this->domainEndpoint->getList();
+        var_dump($result);
+        $this->verifyListResult($result);
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+        $list = $this->domainEndpoint->getList();
+        foreach ($list['list'] as $item) {
+            if ($item['name'] == $this->testDomain) {
+                $result = $this->domainEndpoint->delete(
+                    null,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
+            }
+        }
     }
 }

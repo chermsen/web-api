@@ -28,7 +28,6 @@ class Signature
      */
     private $contentType = 'application/json';
 
-
     /**
      * @param null|string $secret
      * @param null $apiKey
@@ -40,6 +39,10 @@ class Signature
         $this->date = date('c');
     }
 
+    /**
+     * @param RequestInterface $request
+     * @return RequestInterface
+     */
     public function signRequest(RequestInterface $request)
     {
         $request = $request->withHeader('Content-Type', $this->contentType);
@@ -67,7 +70,6 @@ class Signature
                 $this->contentType,
                 $this->date
             ]);
-
     }
 
     /**

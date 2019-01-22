@@ -6,55 +6,55 @@ namespace Myracloud\WebApi\Endpoint;
 use GuzzleHttp\RequestOptions;
 
 /**
- * Class CacheSetting
+ * Class Maintenance
  * @package Myracloud\WebApi\Endpoint
  */
-class CacheSetting extends AbstractEndpoint
+class Maintenance extends AbstractEndpoint
 {
     /**
      * @var string
      */
-    protected $epName = 'cacheSettings';
+    protected $epName = 'maintenance';
+
 
     /**
      * @param $domain
      * @param int $page
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getList($domain, int $page = 1)
     {
         $uri = $this->uri . '/' . $domain . '/' . $page;
 
-        /** @var \GuzzleHttp\Psr7\Response $res */
-        $res = $this->client->get($uri);
-        return $this->handleResponse($res);
+        /** @var \GuzzleHttp\Psr7\Response $response */
+        $response = $this->client->request('GET', $uri);
+        return $this->handleResponse($response);
     }
 
     /**
      * @param $domain
-     * @param $path
-     * @param $ttl
-     * @param string $type
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     * @param null $content
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function create(
         $domain,
-        $path,
-        $ttl,
-        $type = self::MATCHING_TYPE_PREFIX
+        \DateTime $startDate,
+        \DateTime $endDate,
+        $content = null
     ) {
         $uri = $this->uri . '/' . $domain;
 
-
-        $this->validateMatchingType($type);
-
         $options[RequestOptions::JSON] =
             [
-                "path" => $path,
-                "ttl" => $ttl,
-                "type" => $type
+                'content' => $content,
+                'start' => $startDate->format('c'),
+                'end' => $endDate->format('c')
             ];
+
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
@@ -65,9 +65,9 @@ class CacheSetting extends AbstractEndpoint
      * @param $domain
      * @param $id
      * @param \DateTime $modified
-     * @param $path
-     * @param $ttl
-     * @param string $type
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     * @param null $content
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -75,22 +75,19 @@ class CacheSetting extends AbstractEndpoint
         $domain,
         $id,
         \DateTime $modified,
-        $path,
-        $ttl,
-        $type = self::MATCHING_TYPE_PREFIX
+        \DateTime $startDate,
+        \DateTime $endDate,
+        $content = null
     ) {
-
         $uri = $this->uri . '/' . $domain;
-
-        $this->validateMatchingType($type);
 
         $options[RequestOptions::JSON] =
             [
-                "id" => $id,
+                'id' => $id,
                 'modified' => $modified->format('c'),
-                "path" => $path,
-                "ttl" => $ttl,
-                "type" => $type,
+                'content' => $content,
+                'start' => $startDate->format('c'),
+                'end' => $endDate->format('c')
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */

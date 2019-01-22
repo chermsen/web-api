@@ -85,7 +85,7 @@ class CacheSettingTest extends AbstractEndpointTest
     }
 
     /**
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testUpdate()
     {

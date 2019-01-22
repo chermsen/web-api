@@ -52,13 +52,23 @@ class DnsRecord extends AbstractEndpoint
         }
 
         $uri .= '?' . http_build_query($queryParams);
-        var_dump($uri);
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->get($uri);
-        var_dump($res);
-        return json_decode($res->getBody()->getContents(), true);
+
+        return $this->handleResponse($res);
     }
 
+    /**
+     * @param $domain
+     * @param $subdomain
+     * @param $ipAddress
+     * @param $ttl
+     * @param string $recordType
+     * @param bool $active
+     * @param null $sslCertTemplate
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function create(
         $domain,
         $subdomain,
@@ -85,18 +95,21 @@ class DnsRecord extends AbstractEndpoint
         if ($sslCertTemplate != null) {
             $options[RequestOptions::JSON]['sslCertTemplate'] = $sslCertTemplate;
         }
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
+        return $this->handleResponse($res);
     }
 
     /**
      * @param $domain
      * @param $id
      * @param \DateTime $modified
-     * @param $path
+     * @param $subdomain
+     * @param $ipAddress
      * @param $ttl
-     * @param string $type
+     * @param string $recordType
+     * @param bool $active
+     * @param null $sslCertTemplate
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -129,11 +142,8 @@ class DnsRecord extends AbstractEndpoint
         if ($sslCertTemplate != null) {
             $options[RequestOptions::JSON]['sslCertTemplate'] = $sslCertTemplate;
         }
-        var_export($options);
-
-        /** @var \GuzzleHttp\Psr7\Request $res */
+        /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
-        return json_decode($res->getBody()->getContents(), true);
-
+        return $this->handleResponse($res);
     }
 }
