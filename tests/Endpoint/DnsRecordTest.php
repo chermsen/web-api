@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Myracloud\WebApi\Endpoint;
+namespace Myracloud\Tests\Endpoint;
 
-use Myracloud\Tests\Endpoint\AbstractEndpointTest;
+use Myracloud\WebApi\Endpoint\DnsRecord;
 
 /**
  * Class DnsRecordTest
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class DnsRecordTest extends AbstractEndpointTest
@@ -16,25 +17,25 @@ class DnsRecordTest extends AbstractEndpointTest
 
     protected $testData = [
         'create' => [
-            'value' => '123.123.123.123',
-            'priority' => 0,
-            'ttl' => 333,
+            'value'      => '123.123.123.123',
+            'priority'   => 0,
+            'ttl'        => 333,
             'recordType' => 'A',
-            'active' => true,
-            'enabled' => true,
-            'paused' => false,
-            'caaFlags' => 0,
+            'active'     => true,
+            'enabled'    => true,
+            'paused'     => false,
+            'caaFlags'   => 0,
         ],
         'update' => [
-            'value' => '12.23.34.45',
-            'priority' => 0,
-            'ttl' => 333,
+            'value'      => '12.23.34.45',
+            'priority'   => 0,
+            'ttl'        => 333,
             'recordType' => 'A',
-            'active' => false,
-            'enabled' => true,
-            'paused' => false,
-            'caaFlags' => 0,
-        ]
+            'active'     => false,
+            'enabled'    => true,
+            'paused'     => false,
+            'caaFlags'   => 0,
+        ],
     ];
 
 
@@ -50,10 +51,10 @@ class DnsRecordTest extends AbstractEndpointTest
         $this->dnsRecordEndpoint = $this->Api->getDnsRecordEndpoint();
         $this->assertThat($this->dnsRecordEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\DnsRecord'));
 
-        $this->testData['create']['name'] = $this->subDomain . '.' . self::TESTDOMAIN;
+        $this->testData['create']['name']             = $this->subDomain . '.' . self::TESTDOMAIN;
         $this->testData['create']['alternativeCname'] = $this->subDomain . '-' . self::TESTDOMAIN . '.ax4z.com.';
 
-        $this->testData['update']['name'] = $this->subDomain2 . '.' . self::TESTDOMAIN;
+        $this->testData['update']['name']             = $this->subDomain2 . '.' . self::TESTDOMAIN;
         $this->testData['update']['alternativeCname'] = $this->subDomain2 . '-' . self::TESTDOMAIN . '.ax4z.com.';
     }
 

@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Myracloud\WebApi\Endpoint;
+namespace Myracloud\Tests\Endpoint;
 
-use Myracloud\Tests\Endpoint\AbstractEndpointTest;
+use Myracloud\WebApi\Endpoint\CacheSetting;
 
 /**
  * Class CacheSettingTest
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class CacheSettingTest extends AbstractEndpointTest
@@ -17,22 +18,21 @@ class CacheSettingTest extends AbstractEndpointTest
 
     protected $testData = [
         'create' => [
-            'path' => '/testPath',
-            'ttl' => 300,
+            'path'        => '/testPath',
+            'ttl'         => 300,
             'notFoundTtl' => 60,
-            'type' => CacheSetting::MATCHING_TYPE_PREFIX,
-            'enforce' => false,
-            'sort' => 0
-        ]
-        ,
+            'type'        => CacheSetting::MATCHING_TYPE_PREFIX,
+            'enforce'     => false,
+            'sort'        => 0,
+        ]        ,
         'update' => [
-            'path' => '/testPathUpdate',
-            'ttl' => 333,
+            'path'        => '/testPathUpdate',
+            'ttl'         => 333,
             'notFoundTtl' => 60,
-            'type' => CacheSetting::MATCHING_TYPE_PREFIX,
-            'enforce' => false,
-            'sort' => 0
-        ]
+            'type'        => CacheSetting::MATCHING_TYPE_PREFIX,
+            'enforce'     => false,
+            'sort'        => 0,
+        ],
     ];
 
     /**

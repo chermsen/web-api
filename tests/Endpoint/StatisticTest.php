@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace Myracloud\Tests\Endpoint;
 
+use Myracloud\WebApi\Endpoint\Statistic;
+
 /**
  * Class StatisticTest
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class StatisticTest extends AbstractEndpointTest
@@ -23,31 +26,31 @@ class StatisticTest extends AbstractEndpointTest
     }
 
     /**
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testQuery()
     {
-        $endDate = new \DateTime();
+        $endDate   = new \DateTime();
         $startDate = clone $endDate;
         $startDate->sub(new \DateInterval('P1D'));
 
-        $query = [
+        $query  = [
             "query" => [
                 "aggregationInterval" => 'hour',
-                "dataSources" => [
+                "dataSources"         => [
                     'myr' => [
                         'source' => 'bytes_cache_hits',
-                        'type' => 'stats'
-                    ]
+                        'type'   => 'stats',
+                    ],
                 ]
                 ,
-                'startDate' => $startDate->format('c'),
-                'endDate' => $endDate->format('c'),
-                'fqdn' => [
-                    "ALL:" . self::TESTDOMAIN
+                'startDate'           => $startDate->format('c'),
+                'endDate'             => $endDate->format('c'),
+                'fqdn'                => [
+                    "ALL:" . self::TESTDOMAIN,
                 ],
-                'type' => 'fqdn'
-            ]
+                'type'                => 'fqdn',
+            ],
         ];
         $result = $this->statisticEndpoint->query($query);
         var_dump($result);

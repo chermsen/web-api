@@ -7,6 +7,7 @@ use Myracloud\WebApi\Endpoint\Domain;
 
 /**
  * Class DomainTest
+ *
  * @package Myracloud\Tests\Endpoint
  */
 class DomainTest extends AbstractEndpointTest
@@ -18,13 +19,13 @@ class DomainTest extends AbstractEndpointTest
 
     protected $testData = [
         'create' => [
-            'name' => self::TESTDOMAIN,
+            'name'        => self::TESTDOMAIN,
             'maintenance' => false,
-            'paused' => false,
-            'owned' => true,
-            'reversed' => false,
-            'environment' => 'live'
-        ]
+            'paused'      => false,
+            'owned'       => true,
+            'reversed'    => false,
+            'environment' => 'live',
+        ],
     ];
 
     /**

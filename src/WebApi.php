@@ -7,8 +7,16 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use Myracloud\WebApi\Endpoint\CacheClear;
+use Myracloud\WebApi\Endpoint\CacheSetting;
+use Myracloud\WebApi\Endpoint\Certificate;
+use Myracloud\WebApi\Endpoint\DnsRecord;
 use Myracloud\WebApi\Endpoint\Domain;
+use Myracloud\WebApi\Endpoint\IpFilter;
+use Myracloud\WebApi\Endpoint\Maintenance;
 use Myracloud\WebApi\Endpoint\Redirect;
+use Myracloud\WebApi\Endpoint\Statistic;
+use Myracloud\WebApi\Endpoint\SubdomainSetting;
 use Myracloud\WebApi\Middleware\Signature;
 use Psr\Http\Message\RequestInterface;
 
@@ -97,7 +105,7 @@ class WebApi
      */
     public function getDomainEndpoint()
     {
-        return $this->getInstance('Domain');
+        return $this->getInstance(Domain::class);
 
     }
 
@@ -105,14 +113,13 @@ class WebApi
      * @param $name
      * @return mixed
      */
-    private function getInstance($name)
+    private function getInstance($className)
     {
-        if (!array_key_exists($name, $this->endpointCache)) {
-            $classname                  = 'Myracloud\WebApi\Endpoint\\' . $name;
-            $this->endpointCache[$name] = new $classname($this->client);
+        if (!array_key_exists($className, $this->endpointCache)) {
+            $this->endpointCache[$className] = new $className($this->client);
         }
 
-        return $this->endpointCache[$name];
+        return $this->endpointCache[$className];
     }
 
     /**
@@ -121,7 +128,7 @@ class WebApi
      */
     public function getRedirectEndpoint()
     {
-        return $this->getInstance('Redirect');
+        return $this->getInstance(Redirect::class);
     }
 
     /**
@@ -130,7 +137,25 @@ class WebApi
      */
     public function getCacheSettingsEndpoint()
     {
-        return $this->getInstance('CacheSetting');
+        return $this->getInstance(CacheSetting::class);
+    }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getCertificateEndpoint()
+    {
+        return $this->getInstance(Certificate::class);
+    }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getSubdomainSettingsEndpoint()
+    {
+        return $this->getInstance(SubdomainSetting::class);
     }
 
     /**
@@ -139,7 +164,7 @@ class WebApi
      */
     public function getDnsRecordEndpoint()
     {
-        return $this->getInstance('DnsRecord');
+        return $this->getInstance(DnsRecord::class);
     }
 
     /**
@@ -148,7 +173,7 @@ class WebApi
      */
     public function getStatisticEndpoint()
     {
-        return $this->getInstance('Statistic');
+        return $this->getInstance(Statistic::class);
     }
 
     /**
@@ -157,7 +182,7 @@ class WebApi
      */
     public function getMaintenanceEndpoint()
     {
-        return $this->getInstance('Maintenance');
+        return $this->getInstance(Maintenance::class);
     }
 
     /**
@@ -166,7 +191,16 @@ class WebApi
      */
     public function getIpFilterEndpoint()
     {
-        return $this->getInstance('IpFilter');
+        return $this->getInstance(IpFilter::class);
+    }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getCacheClearEndpoint()
+    {
+        return $this->getInstance(CacheClear::class);
     }
 
 

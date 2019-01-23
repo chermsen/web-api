@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class AbstractEndpointTest
+ *
  * @package Myracloud\Tests\Endpoint
  */
 abstract class AbstractEndpointTest extends TestCase
@@ -24,8 +25,8 @@ abstract class AbstractEndpointTest extends TestCase
      */
     protected function setUp()
     {
-        $config = new config();
-        $config = $config->get();
+        $config    = new config();
+        $config    = $config->get();
         $this->Api = new WebApi(
             $config['apiKey'],
             $config['secret'],
@@ -83,7 +84,7 @@ abstract class AbstractEndpointTest extends TestCase
     protected function verifyTargetObject($result, $type): void
     {
         $this->assertArrayHasKey('targetObject', $result);
-        $this->assertEquals(1, count($result['targetObject']));
+        $this->assertGreaterThan(0, count($result['targetObject']));
         $this->assertIsArray($result['targetObject'][0]);
 
         $this->assertArrayHasKey('objectType', $result['targetObject'][0]);
