@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 
 /**
  * Class AbstractEndpoint
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 abstract class AbstractEndpoint
@@ -26,16 +27,16 @@ abstract class AbstractEndpoint
 
     const MATCHING_TYPE_PREFIX = 'prefix';
     const MATCHING_TYPE_SUFFIX = 'suffix';
-    const MATCHING_TYPE_EXACT = 'exact';
+    const MATCHING_TYPE_EXACT  = 'exact';
 
-    const DNS_TYPE_A = 'A';
-    const DNS_TYPE_AAAA = 'AAAA';
-    const DNS_TYPE_MX = 'MX';
+    const DNS_TYPE_A     = 'A';
+    const DNS_TYPE_AAAA  = 'AAAA';
+    const DNS_TYPE_MX    = 'MX';
     const DNS_TYPE_CNAME = 'CNAME';
-    const DNS_TYPE_TXT = 'TXT';
-    const DNS_TYPE_NS = 'NS';
-    const DNS_TYPE_SRV = 'SRV';
-    const DNS_TYPE_CAA = 'CAA';
+    const DNS_TYPE_TXT   = 'TXT';
+    const DNS_TYPE_NS    = 'NS';
+    const DNS_TYPE_SRV   = 'SRV';
+    const DNS_TYPE_CAA   = 'CAA';
 
     const IPFILTER_TYPE_WHITELIST = 'WHITELIST';
     const IPFILTER_TYPE_BLACKLIST = 'BLACKLIST';
@@ -56,6 +57,7 @@ abstract class AbstractEndpoint
 
     /**
      * Domain constructor.
+     *
      * @param Client $client
      * @throws \Exception
      */
@@ -65,9 +67,9 @@ abstract class AbstractEndpoint
             throw new \Exception('Must define endpoint name $this->epName');
         }
         /** @var Uri $basUri */
-        $basUri = $client->getConfig('base_uri');
+        $basUri       = $client->getConfig('base_uri');
         $this->client = $client;
-        $this->uri = (string)$basUri->withPath($basUri->getPath() . '/' . $this->epName);
+        $this->uri    = (string)$basUri->withPath($basUri->getPath() . '/' . $this->epName);
     }
 
     /**
@@ -83,12 +85,13 @@ abstract class AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                'id' => $id,
-                'modified' => $modified->format('c')
+                'id'       => $id,
+                'modified' => $modified->format('c'),
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('DELETE', $uri, $options);
+
         return $this->handleResponse($res);
     }
 
@@ -103,6 +106,7 @@ abstract class AbstractEndpoint
                 'Invalid Response. ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase()
             );
         }
+
         return \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
     }
 
@@ -150,7 +154,7 @@ abstract class AbstractEndpoint
             self::DNS_TYPE_TXT,
             self::DNS_TYPE_NS,
             self::DNS_TYPE_SRV,
-            self::DNS_TYPE_CAA
+            self::DNS_TYPE_CAA,
         ])) {
             throw new \Exception('Unknown Record Type.');
         }

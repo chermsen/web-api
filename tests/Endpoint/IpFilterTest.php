@@ -5,6 +5,11 @@ namespace Myracloud\Tests\Endpoint;
 
 use Myracloud\WebApi\Endpoint\IpFilter;
 
+/**
+ * Class IpFilterTest
+ *
+ * @package Myracloud\Tests\Endpoint
+ */
 class IpFilterTest extends AbstractEndpointTest
 {
     /** @var IpFilter */
@@ -12,13 +17,13 @@ class IpFilterTest extends AbstractEndpointTest
 
     protected $testData = [
         'create' => [
-            'type' => IpFilter::IPFILTER_TYPE_BLACKLIST,
-            'value' => '1.2.3.4/32'
+            'type'  => IpFilter::IPFILTER_TYPE_BLACKLIST,
+            'value' => '1.2.3.4/32',
         ],
         'update' => [
-            'type' => IpFilter::IPFILTER_TYPE_WHITELIST,
-            'value' => '5.6.7.8/32'
-        ]
+            'type'  => IpFilter::IPFILTER_TYPE_WHITELIST,
+            'value' => '5.6.7.8/32',
+        ],
     ];
 
     /**
@@ -104,8 +109,5 @@ class IpFilterTest extends AbstractEndpointTest
 
             }
         }
-
     }
-
-
 }

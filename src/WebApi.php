@@ -14,6 +14,7 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * Class WebApi
+ *
  * @package Myracloud\WebApi
  */
 class WebApi
@@ -45,11 +46,12 @@ class WebApi
 
     /**
      * WebApi constructor.
-     * @param $apiKey
-     * @param $secret
-     * @param null $site
+     *
+     * @param        $apiKey
+     * @param        $secret
+     * @param null   $site
      * @param string $lang
-     * @param array $connectionConfig
+     * @param array  $connectionConfig
      */
     public function __construct($apiKey, $secret, $site = null, $lang = 'en', $connectionConfig = [])
     {
@@ -77,11 +79,11 @@ class WebApi
             )
         );
 
-        $client = new Client(
+        $client       = new Client(
             array_merge(
                 [
                     'base_uri' => 'https://' . $this->site . '/' . $this->lang . '/rapi',
-                    'handler' => $stack
+                    'handler'  => $stack,
                 ],
                 $connectionConfig
             )
@@ -106,9 +108,10 @@ class WebApi
     private function getInstance($name)
     {
         if (!array_key_exists($name, $this->endpointCache)) {
-            $classname = 'Myracloud\WebApi\Endpoint\\' . $name;
+            $classname                  = 'Myracloud\WebApi\Endpoint\\' . $name;
             $this->endpointCache[$name] = new $classname($this->client);
         }
+
         return $this->endpointCache[$name];
     }
 

@@ -14,7 +14,7 @@ class IpFilter extends AbstractEndpoint
     protected $epName = 'ipfilter';
 
     /**
-     * @param $domain
+     * @param     $domain
      * @param int $page
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -25,6 +25,7 @@ class IpFilter extends AbstractEndpoint
 
         /** @var \GuzzleHttp\Psr7\Response $response */
         $response = $this->client->request('GET', $uri);
+
         return $this->handleResponse($response);
     }
 
@@ -45,13 +46,14 @@ class IpFilter extends AbstractEndpoint
         $this->validateIpfilterType($type);
         $options[RequestOptions::JSON] =
             [
-                'type' => $type,
-                'value' => $value
+                'type'  => $type,
+                'value' => $value,
             ];
 
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
+
         return $this->handleResponse($res);
     }
 
@@ -68,13 +70,14 @@ class IpFilter extends AbstractEndpoint
         $this->validateIpfilterType($type);
         $options[RequestOptions::JSON] =
             [
-                'id' => $id,
+                'id'       => $id,
                 'modified' => $modified->format('c'),
-                'type' => $type,
-                'value' => $value
+                'type'     => $type,
+                'value'    => $value,
             ];
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
+
         return $this->handleResponse($res);
     }
 }

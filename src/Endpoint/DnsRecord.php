@@ -7,6 +7,7 @@ use GuzzleHttp\RequestOptions;
 
 /**
  * Class DnsRecord
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class DnsRecord extends AbstractEndpoint
@@ -17,8 +18,8 @@ class DnsRecord extends AbstractEndpoint
     protected $epName = 'dnsRecords';
 
     /**
-     * @param $domain
-     * @param int $page
+     * @param      $domain
+     * @param int  $page
      * @param null $search
      * @param null $recordType
      * @param bool $activeOnly
@@ -59,13 +60,13 @@ class DnsRecord extends AbstractEndpoint
     }
 
     /**
-     * @param $domain
-     * @param $subdomain
-     * @param $ipAddress
-     * @param $ttl
+     * @param        $domain
+     * @param        $subdomain
+     * @param        $ipAddress
+     * @param        $ttl
      * @param string $recordType
-     * @param bool $active
-     * @param null $sslCertTemplate
+     * @param bool   $active
+     * @param null   $sslCertTemplate
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -85,11 +86,11 @@ class DnsRecord extends AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                'name' => $subdomain,
-                'value' => $ipAddress,
-                'ttl' => $ttl,
+                'name'       => $subdomain,
+                'value'      => $ipAddress,
+                'ttl'        => $ttl,
                 'recordType' => $recordType,
-                'active' => $active,
+                'active'     => $active,
             ];
 
         if ($sslCertTemplate != null) {
@@ -97,19 +98,20 @@ class DnsRecord extends AbstractEndpoint
         }
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
+
         return $this->handleResponse($res);
     }
 
     /**
-     * @param $domain
-     * @param $id
+     * @param           $domain
+     * @param           $id
      * @param \DateTime $modified
-     * @param $subdomain
-     * @param $ipAddress
-     * @param $ttl
-     * @param string $recordType
-     * @param bool $active
-     * @param null $sslCertTemplate
+     * @param           $subdomain
+     * @param           $ipAddress
+     * @param           $ttl
+     * @param string    $recordType
+     * @param bool      $active
+     * @param null      $sslCertTemplate
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -131,19 +133,20 @@ class DnsRecord extends AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                "id" => $id,
-                'modified' => $modified->format('c'),
-                'name' => $subdomain,
-                'value' => $ipAddress,
-                'ttl' => $ttl,
+                "id"         => $id,
+                'modified'   => $modified->format('c'),
+                'name'       => $subdomain,
+                'value'      => $ipAddress,
+                'ttl'        => $ttl,
                 'recordType' => $recordType,
-                'active' => $active,
+                'active'     => $active,
             ];
         if ($sslCertTemplate != null) {
             $options[RequestOptions::JSON]['sslCertTemplate'] = $sslCertTemplate;
         }
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
+
         return $this->handleResponse($res);
     }
 }

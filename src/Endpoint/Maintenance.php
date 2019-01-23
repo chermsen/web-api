@@ -7,6 +7,7 @@ use GuzzleHttp\RequestOptions;
 
 /**
  * Class Maintenance
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class Maintenance extends AbstractEndpoint
@@ -18,7 +19,7 @@ class Maintenance extends AbstractEndpoint
 
 
     /**
-     * @param $domain
+     * @param     $domain
      * @param int $page
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -29,14 +30,15 @@ class Maintenance extends AbstractEndpoint
 
         /** @var \GuzzleHttp\Psr7\Response $response */
         $response = $this->client->request('GET', $uri);
+
         return $this->handleResponse($response);
     }
 
     /**
-     * @param $domain
+     * @param           $domain
      * @param \DateTime $startDate
      * @param \DateTime $endDate
-     * @param null $content
+     * @param null      $content
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -51,20 +53,21 @@ class Maintenance extends AbstractEndpoint
         $options[RequestOptions::JSON] =
             [
                 'content' => $content,
-                'start' => $startDate->format('c'),
-                'end' => $endDate->format('c')
+                'start'   => $startDate->format('c'),
+                'end'     => $endDate->format('c'),
             ];
 
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
+
         return $this->handleResponse($res);
     }
 
     /**
-     * @param string $domain
-     * @param \DateTime $startDate
-     * @param \DateTime $endDate
+     * @param string      $domain
+     * @param \DateTime   $startDate
+     * @param \DateTime   $endDate
      * @param string|null $customLabel
      * @param string|null $customUrl
      * @param string|null $facebookUrl
@@ -99,23 +102,24 @@ class Maintenance extends AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                'start' => $startDate->format('c'),
-                'end' => $endDate->format('c'),
-                'defaultPage' => $pageData
+                'start'       => $startDate->format('c'),
+                'end'         => $endDate->format('c'),
+                'defaultPage' => $pageData,
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
+
         return $this->handleResponse($res);
     }
 
     /**
-     * @param $domain
-     * @param $id
+     * @param           $domain
+     * @param           $id
      * @param \DateTime $modified
      * @param \DateTime $startDate
      * @param \DateTime $endDate
-     * @param null $content
+     * @param null      $content
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -131,15 +135,16 @@ class Maintenance extends AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                'id' => $id,
+                'id'       => $id,
                 'modified' => $modified->format('c'),
-                'content' => $content,
-                'start' => $startDate->format('c'),
-                'end' => $endDate->format('c')
+                'content'  => $content,
+                'start'    => $startDate->format('c'),
+                'end'      => $endDate->format('c'),
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
+
         return $this->handleResponse($res);
     }
 }

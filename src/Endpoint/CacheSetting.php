@@ -7,6 +7,7 @@ use GuzzleHttp\RequestOptions;
 
 /**
  * Class CacheSetting
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class CacheSetting extends AbstractEndpoint
@@ -17,7 +18,7 @@ class CacheSetting extends AbstractEndpoint
     protected $epName = 'cacheSettings';
 
     /**
-     * @param $domain
+     * @param     $domain
      * @param int $page
      * @return mixed
      */
@@ -27,13 +28,14 @@ class CacheSetting extends AbstractEndpoint
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->get($uri);
+
         return $this->handleResponse($res);
     }
 
     /**
-     * @param $domain
-     * @param $path
-     * @param $ttl
+     * @param        $domain
+     * @param        $path
+     * @param        $ttl
      * @param string $type
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -52,22 +54,23 @@ class CacheSetting extends AbstractEndpoint
         $options[RequestOptions::JSON] =
             [
                 "path" => $path,
-                "ttl" => $ttl,
-                "type" => $type
+                "ttl"  => $ttl,
+                "type" => $type,
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('PUT', $uri, $options);
+
         return $this->handleResponse($res);
     }
 
     /**
-     * @param $domain
-     * @param $id
+     * @param           $domain
+     * @param           $id
      * @param \DateTime $modified
-     * @param $path
-     * @param $ttl
-     * @param string $type
+     * @param           $path
+     * @param           $ttl
+     * @param string    $type
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -86,15 +89,16 @@ class CacheSetting extends AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                "id" => $id,
+                "id"       => $id,
                 'modified' => $modified->format('c'),
-                "path" => $path,
-                "ttl" => $ttl,
-                "type" => $type,
+                "path"     => $path,
+                "ttl"      => $ttl,
+                "type"     => $type,
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
+
         return $this->handleResponse($res);
     }
 }

@@ -7,6 +7,7 @@ use GuzzleHttp\RequestOptions;
 
 /**
  * Class Statistic
+ *
  * @package Myracloud\WebApi\Endpoint
  */
 class Statistic extends AbstractEndpoint
@@ -41,6 +42,7 @@ class Statistic extends AbstractEndpoint
 
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('POST', $uri, $options);
+
         return $this->handleResponse($res);
     }
 }

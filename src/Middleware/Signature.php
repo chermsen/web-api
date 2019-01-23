@@ -7,6 +7,7 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * Class Signature
+ *
  * @package Myracloud\WebApi\Authentication
  */
 class Signature
@@ -30,13 +31,13 @@ class Signature
 
     /**
      * @param null|string $secret
-     * @param null $apiKey
+     * @param null        $apiKey
      */
     public function __construct($secret = null, $apiKey = null)
     {
         $this->secret = $secret;
         $this->apiKey = $apiKey;
-        $this->date = date('c');
+        $this->date   = date('c');
     }
 
     /**
@@ -51,6 +52,7 @@ class Signature
         $signingString = $this->getStringToSign($request);
 
         $request = $request->withHeader('Authorization', $this->getSignature($signingString));
+
         return $request;
     }
 
@@ -68,7 +70,7 @@ class Signature
                 $request->getMethod(),
                 $request->getUri()->getPath(),
                 $this->contentType,
-                $this->date
+                $this->date,
             ]);
     }
 
@@ -81,9 +83,10 @@ class Signature
     public function getSignature($signingString)
     {
 
-        $key = hash_hmac('sha256', $this->date, 'MYRA' . $this->secret);
-        $key = hash_hmac('sha256', 'myra-api-request', $key);
+        $key       = hash_hmac('sha256', $this->date, 'MYRA' . $this->secret);
+        $key       = hash_hmac('sha256', 'myra-api-request', $key);
         $signature = base64_encode(hash_hmac('sha512', $signingString, $key, true));
+
         return "MYRA " . $this->apiKey . ":" . $signature;
     }
 }
