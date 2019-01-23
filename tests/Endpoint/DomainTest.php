@@ -16,6 +16,17 @@ class DomainTest extends AbstractEndpointTest
      */
     protected $domainEndpoint;
 
+    protected $testData = [
+        'create' => [
+            'name' => self::TESTDOMAIN,
+            'maintenance' => false,
+            'paused' => false,
+            'owned' => true,
+            'reversed' => false,
+            'environment' => 'live'
+        ]
+    ];
+
     /**
      *
      */
@@ -31,10 +42,28 @@ class DomainTest extends AbstractEndpointTest
      */
     public function testSequence()
     {
+        $this->testDelete();
         $this->testCreate();
         $this->testUpdate();
         $this->testGetList();
-        $this->testDelete();
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+        $list = $this->domainEndpoint->getList();
+        foreach ($list['list'] as $item) {
+            if ($item['name'] == self::TESTDOMAIN) {
+                $result = $this->domainEndpoint->delete(
+                    null,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
+            }
+        }
     }
 
     /**
@@ -42,40 +71,13 @@ class DomainTest extends AbstractEndpointTest
      */
     public function testCreate()
     {
-        $objectFields = [
-            'objectType',
-            'id',
-            'modified',
-            'created',
-            'name',
-            'autoUpdate',
-            'maintenance',
-            'paused',
-            'owned',
-            'dnsRecords',
-            'reversed',
-            'environment'
-        ];
-
-        $result = $this->domainEndpoint->create($this->testDomain);
+        $result = $this->domainEndpoint->create(self::TESTDOMAIN);
 
         $this->verifyNoError($result);
 
-        $this->assertArrayHasKey('targetObject', $result);
+        $this->verifyTargetObject($result, 'DomainVO');
 
-        $this->assertEquals(1, count($result['targetObject']));
-
-        $this->assertIsArray($result['targetObject'][0]);
-
-
-        foreach ($objectFields as $field) {
-            $this->assertArrayHasKey($field, $result['targetObject'][0]);
-        }
-
-        $this->assertEquals('DomainVO', $result['targetObject'][0]['objectType']);
-        $this->assertEquals($this->testDomain, $result['targetObject'][0]['name']);
-
-        var_dump($result);
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
     }
 
     /**
@@ -85,14 +87,15 @@ class DomainTest extends AbstractEndpointTest
     {
         $list = $this->domainEndpoint->getList();
         foreach ($list['list'] as $item) {
-            if ($item['name'] == $this->testDomain) {
-                $oldValue = $item['autoUpdate'];
+            if ($item['name'] == self::TESTDOMAIN) {
                 $result = $this->domainEndpoint->update(
                     $item['id'],
                     new \DateTime($item['modified']),
                     !$item['autoUpdate']
                 );
-                $this->assertNotEquals($oldValue, $result['targetObject'][0]['autoUpdate']);
+                $this->verifyNoError($result);
+
+                $this->verifyTargetObject($result, 'DomainVO');
             }
         }
     }
@@ -105,23 +108,5 @@ class DomainTest extends AbstractEndpointTest
         $result = $this->domainEndpoint->getList();
         var_dump($result);
         $this->verifyListResult($result);
-    }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testDelete()
-    {
-        $list = $this->domainEndpoint->getList();
-        foreach ($list['list'] as $item) {
-            if ($item['name'] == $this->testDomain) {
-                $result = $this->domainEndpoint->delete(
-                    null,
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->verifyNoError($result);
-            }
-        }
     }
 }

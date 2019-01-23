@@ -37,6 +37,9 @@ abstract class AbstractEndpoint
     const DNS_TYPE_SRV = 'SRV';
     const DNS_TYPE_CAA = 'CAA';
 
+    const IPFILTER_TYPE_WHITELIST = 'WHITELIST';
+    const IPFILTER_TYPE_BLACKLIST = 'BLACKLIST';
+
     /**
      * @var Client
      */
@@ -150,6 +153,20 @@ abstract class AbstractEndpoint
             self::DNS_TYPE_CAA
         ])) {
             throw new \Exception('Unknown Record Type.');
+        }
+    }
+
+    /**
+     * @param $value
+     * @throws \Exception
+     */
+    protected function validateIpfilterType($value)
+    {
+        if (!in_array($value, [
+            self::IPFILTER_TYPE_BLACKLIST,
+            self::IPFILTER_TYPE_WHITELIST,
+        ])) {
+            throw new \Exception('Unknown IpFilter Type.');
         }
     }
 }

@@ -106,7 +106,7 @@ class WebApi
     private function getInstance($name)
     {
         if (!array_key_exists($name, $this->endpointCache)) {
-            $classname = 'Myracloud\WebApi\Endpoint\\'.$name;
+            $classname = 'Myracloud\WebApi\Endpoint\\' . $name;
             $this->endpointCache[$name] = new $classname($this->client);
         }
         return $this->endpointCache[$name];
@@ -155,6 +155,15 @@ class WebApi
     public function getMaintenanceEndpoint()
     {
         return $this->getInstance('Maintenance');
+    }
+
+    /**
+     * @return Redirect
+     * @throws \Exception
+     */
+    public function getIpFilterEndpoint()
+    {
+        return $this->getInstance('IpFilter');
     }
 
 

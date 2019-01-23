@@ -44,13 +44,13 @@ class StatisticTest extends AbstractEndpointTest
                 'startDate' => $startDate->format('c'),
                 'endDate' => $endDate->format('c'),
                 'fqdn' => [
-                    "ALL:" . $this->testDomain
+                    "ALL:" . self::TESTDOMAIN
                 ],
                 'type' => 'fqdn'
             ]
         ];
         $result = $this->statisticEndpoint->query($query);
-
+        var_dump($result);
         $this->assertArrayHasKey('objectType', $result);
 
         $this->assertEquals('StatisticVO', $result['objectType']);

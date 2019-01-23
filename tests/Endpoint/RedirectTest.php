@@ -15,16 +15,23 @@ class RedirectTest extends AbstractEndpointTest
      * @var Redirect
      */
     protected $redirectEndpoint;
-    /**
-     * @var string
-     */
-    protected $redirSource = '/test_source';
-    protected $redirSource2 = '/test_source_changed';
-    /**
-     * @var string
-     */
-    protected $redirDest = '/test_dest';
-    protected $redirDest2 = '/test_destination_changed';
+
+    protected $testData = [
+        'create' => [
+            'source' => '/test_source',
+            'destination' => '/test_dest',
+            'type' => Redirect::REDIRECT_TYPE_REDIRECT,
+            'subDomainName' => self::TESTDOMAIN . '.',
+            'matchingType' => Redirect::MATCHING_TYPE_PREFIX
+        ],
+        'update' => [
+            'source' => '/test_source_changed',
+            'destination' => '/test_destination_changed',
+            'type' => Redirect::REDIRECT_TYPE_REDIRECT,
+            'subDomainName' => self::TESTDOMAIN . '.',
+            'matchingType' => Redirect::MATCHING_TYPE_PREFIX
+        ]
+    ];
 
     /**
      *
@@ -41,6 +48,7 @@ class RedirectTest extends AbstractEndpointTest
      */
     public function testSequence()
     {
+        $this->testDelete();
         $this->testCreate();
         $this->testUpdate();
         $this->testGetList();
@@ -50,64 +58,59 @@ class RedirectTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testCreate()
+    public function testDelete()
     {
-        $objectFields = array(
-            'objectType',
-            'id',
-            'modified',
-            'created',
-            'source',
-            'destination',
-            'type',
-            'subDomainName',
-            'matchingType',
-            'sort',
-        );
-
-
-        $result = $this->redirectEndpoint->create($this->testDomain, $this->redirSource, $this->redirDest);
-        $this->verifyNoError($result);
-        $this->assertArrayHasKey('targetObject', $result);
-
-        $this->assertEquals(1, count($result['targetObject']));
-
-        $this->assertIsArray($result['targetObject'][0]);
-
-
-        foreach ($objectFields as $field) {
-            $this->assertArrayHasKey($field, $result['targetObject'][0]);
+        $list = $this->redirectEndpoint->getList(self::TESTDOMAIN);
+        foreach ($list['list'] as $item) {
+            if (
+                $item['source'] == $this->testData['create']['source']
+                || $item['source'] == $this->testData['update']['source']
+            ) {
+                $result = $this->redirectEndpoint->delete(
+                    self::TESTDOMAIN,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
+            }
         }
-
-        $this->assertEquals('DnsRedirectVO', $result['targetObject'][0]['objectType']);
-
-
-        $this->assertEquals($this->redirSource, $result['targetObject'][0]['source']);
-        $this->assertEquals($this->redirDest, $result['targetObject'][0]['destination']);
-        var_dump($result);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testCreate()
+    {
+
+        $result = $this->redirectEndpoint->create(
+            self::TESTDOMAIN,
+            $this->testData['create']['source'],
+            $this->testData['create']['destination']
+        );
+        var_dump($result);
+        $this->verifyNoError($result);
+        $this->verifyTargetObject($result, 'DnsRedirectVO');
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
+    }
 
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testUpdate()
     {
-        $list = $this->redirectEndpoint->getList($this->testDomain);
+        $list = $this->redirectEndpoint->getList(self::TESTDOMAIN);
         foreach ($list['list'] as $item) {
-            if ($item['source'] == $this->redirSource) {
-                $res = $this->redirectEndpoint->update(
-                    $this->testDomain, $item['id'],
+            if ($item['source'] == $this->testData['create']['source']) {
+                $result = $this->redirectEndpoint->update(
+                    self::TESTDOMAIN, $item['id'],
                     new \DateTime($item['modified']),
-                    $this->redirSource2,
-                    $this->redirDest2
+                    $this->testData['update']['source'],
+                    $this->testData['update']['destination']
                 );
-                $this->assertArrayHasKey('targetObject', $res);
-                $this->assertEquals(1, count($res['targetObject']));
-                $this->assertArrayHasKey('source', $res['targetObject']);
-                $this->assertEquals($this->redirSource2, $res['targetObject']['source']);
-                $this->assertArrayHasKey('destination', $res['targetObject']);
-                $this->assertEquals($this->redirDest2, $res['targetObject']['destination']);
+
+                $this->verifyNoError($result);
+                $this->verifyTargetObject($result, 'DnsRedirectVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
             }
         }
     }
@@ -117,30 +120,9 @@ class RedirectTest extends AbstractEndpointTest
      */
     public function testGetList()
     {
-        $result = $this->redirectEndpoint->getList($this->testDomain);
+        $result = $this->redirectEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
         var_dump($result);
-    }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testDelete()
-    {
-        $list = $this->redirectEndpoint->getList($this->testDomain);
-        foreach ($list['list'] as $item) {
-            if (
-                $item['source'] == $this->redirSource
-                || $item['source'] == $this->redirSource2
-            ) {
-                $result = $this->redirectEndpoint->delete(
-                    $this->testDomain,
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->verifyNoError($result);
-            }
-        }
     }
 }
 

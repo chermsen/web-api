@@ -62,6 +62,54 @@ class Maintenance extends AbstractEndpoint
     }
 
     /**
+     * @param string $domain
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     * @param string|null $customLabel
+     * @param string|null $customUrl
+     * @param string|null $facebookUrl
+     * @param string|null $twitterUrl
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function createDefaultPage(
+        $domain,
+        \DateTime $startDate,
+        \DateTime $endDate,
+        $customLabel = null,
+        $customUrl = null,
+        $facebookUrl = null,
+        $twitterUrl = null
+    ) {
+        $uri = $this->uri . '/' . $domain;
+
+        $pageData = [];
+        if ($facebookUrl != null) {
+            $pageData['facebook'] = $facebookUrl;
+        }
+        if ($twitterUrl != null) {
+            $pageData['twitter'] = $twitterUrl;
+        }
+        if ($customLabel != null) {
+            $pageData['custom']['label'] = $customLabel;
+        }
+        if ($customUrl != null) {
+            $pageData['custom']['url'] = $customUrl;
+        }
+
+        $options[RequestOptions::JSON] =
+            [
+                'start' => $startDate->format('c'),
+                'end' => $endDate->format('c'),
+                'defaultPage' => $pageData
+            ];
+
+        /** @var \GuzzleHttp\Psr7\Response $res */
+        $res = $this->client->request('PUT', $uri, $options);
+        return $this->handleResponse($res);
+    }
+
+    /**
      * @param $domain
      * @param $id
      * @param \DateTime $modified

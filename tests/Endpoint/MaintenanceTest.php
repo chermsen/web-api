@@ -14,6 +14,25 @@ class MaintenanceTest extends AbstractEndpointTest
     /** @var Maintenance */
     protected $maintenanceEndpoint;
 
+    protected $testData = [
+        'create' => [
+            'fqdn' => self::TESTDOMAIN,
+            'content' => 'Maintenance Page',
+            'active' => true
+        ],
+        'update' => [
+            'fqdn' => self::TESTDOMAIN,
+            'content' => 'Maintenande Page changed'
+        ],
+        'default' => [
+            'label' => 'aaaaaaaaaaaaaaaa',
+            'value' => 'bbbbbbbbbbbbbbbb',
+            'twitter' => 'cccccccccccccccc',
+            'facebook' => 'dddddddddddddddd'
+        ]
+    ];
+
+
     /**
      *
      */
@@ -27,11 +46,31 @@ class MaintenanceTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testGetList()
+    public function testSequence()
     {
-        $result = $this->maintenanceEndpoint->getList($this->testDomain);
-        $this->verifyListResult($result);
-        var_dump($result);
+        $this->testDelete();
+        $this->testCreate();
+        $this->testUpdate();
+        $this->testGetList();
+        $this->testDelete();
+        $this->testCreateDefault();
+        $this->testDelete();
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testDelete()
+    {
+        $list = $this->maintenanceEndpoint->getList(self::TESTDOMAIN);
+
+        foreach ($list['list'] as $item) {
+            $res = $this->maintenanceEndpoint->delete(
+                self::TESTDOMAIN,
+                $item['id'],
+                new \DateTime($item['modified'])
+            );
+        }
     }
 
     /**
@@ -43,59 +82,40 @@ class MaintenanceTest extends AbstractEndpointTest
         $startDate = clone $endDate;
         $startDate->sub(new \DateInterval('P1D'));
 
-        $testObject = array(
-            'content' => 'Maintenande Page',
-            'start' => $startDate,
-            'end' => $endDate,
+        $result = $this->maintenanceEndpoint->create(
+            self::TESTDOMAIN,
+            $startDate,
+            $endDate,
+            $this->testData['create']['content']
         );
 
-        $result = $this->maintenanceEndpoint->create($this->testDomain, $startDate, $endDate, $testObject['content']);
-
+        var_dump($result);
         $this->verifyNoError($result);
-
-        $this->assertArrayHasKey('targetObject', $result);
-
-        $this->assertEquals(1, count($result['targetObject']));
-
-        $this->assertIsArray($result['targetObject'][0]);
-
-        $this->assertArrayHasKey('objectType', $result['targetObject'][0]);
-        $this->assertEquals('MaintenanceVO', $result['targetObject'][0]['objectType']);
-
-        $this->assertArrayHasKey('fqdn', $result['targetObject'][0]);
-        $this->assertEquals($this->testDomain, $result['targetObject'][0]['fqdn']);
-
-        $this->assertArrayHasKey('start', $result['targetObject'][0]);
-        $this->assertArrayHasKey('end', $result['targetObject'][0]);
-
-        $this->assertArrayHasKey('content', $result['targetObject'][0]);
-        $this->assertEquals($testObject['content'], $result['targetObject'][0]['content']);
+        $this->verifyTargetObject($result, 'MaintenanceVO');
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
     }
-
 
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testUpdate()
     {
-        $newContent = 'Maintenande Page changed';
-        $list = $this->maintenanceEndpoint->getList($this->testDomain);
+        $list = $this->maintenanceEndpoint->getList(self::TESTDOMAIN);
 
         foreach ($list['list'] as $item) {
-            if ($item['content'] == 'Maintenande Page') {
-                $res = $this->maintenanceEndpoint->update(
-                    $this->testDomain,
+            if ($item['content'] == $this->testData['create']['content']) {
+                $result = $this->maintenanceEndpoint->update(
+                    self::TESTDOMAIN,
                     $item['id'],
                     new \DateTime($item['modified']),
                     new \DateTime($item['start']),
                     new \DateTime($item['end']),
-                    $newContent
+                    $this->testData['update']['content']
                 );
-                var_export($res);
-                $this->assertArrayHasKey('targetObject', $res);
-                $this->assertEquals(1, count($res['targetObject']));
-                $this->assertArrayHasKey('content', $res['targetObject'][0]);
-                $this->assertEquals($newContent, $res['targetObject'][0]['content']);
+                var_export($result);
+                $this->verifyNoError($result);
+                $this->verifyTargetObject($result, 'MaintenanceVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
             }
         }
     }
@@ -103,16 +123,43 @@ class MaintenanceTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testDelete()
+    public function testGetList()
     {
-        $list = $this->maintenanceEndpoint->getList($this->testDomain);
+        $result = $this->maintenanceEndpoint->getList(self::TESTDOMAIN);
+        $this->verifyListResult($result);
+        var_export($result);
+    }
 
-        foreach ($list['list'] as $item) {
-            $res = $this->maintenanceEndpoint->delete(
-                $this->testDomain,
-                $item['id'],
-                new \DateTime($item['modified'])
-            );
-        }
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testCreateDefault()
+    {
+        $endDate = new \DateTime();
+        $startDate = clone $endDate;
+        $startDate->sub(new \DateInterval('P1D'));
+
+        $result = $this->maintenanceEndpoint->createDefaultPage(
+            self::TESTDOMAIN,
+            $startDate,
+            $endDate,
+            $this->testData['default']['label'],
+            $this->testData['default']['value'],
+            $this->testData['default']['facebook'],
+            $this->testData['default']['twitter']
+        );
+        $this->verifyNoError($result);
+        $this->verifyTargetObject($result, 'MaintenanceVO');
+
+
+        $this->assertArrayHasKey('targetObject', $result);
+
+        $this->assertEquals(1, count($result['targetObject']));
+
+        $this->assertStringContainsString($this->testData['default']['label'], $result['targetObject'][0]['content']);
+        $this->assertStringContainsString($this->testData['default']['value'], $result['targetObject'][0]['content']);
+        $this->assertStringContainsString($this->testData['default']['facebook'],
+            $result['targetObject'][0]['content']);
+        $this->assertStringContainsString($this->testData['default']['twitter'], $result['targetObject'][0]['content']);
     }
 }

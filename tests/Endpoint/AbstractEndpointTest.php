@@ -14,13 +14,10 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class AbstractEndpointTest extends TestCase
 {
+    const TESTDOMAIN = 'myratest.org';
 
     /** @var WebApi */
     protected $Api;
-    /**
-     * @var string
-     */
-    protected $testDomain = 'myratest.org';
 
     /**
      *
@@ -64,7 +61,33 @@ abstract class AbstractEndpointTest extends TestCase
     {
         $this->assertIsArray($result);
         $this->assertArrayHasKey('error', $result);
-        $this->assertEquals(false, $result['error']);
+        $this->assertEquals(false, $result['error'], 'Result contained Error Flag.');
+    }
+
+    /**
+     * @param $result
+     * @param $data
+     */
+    protected function verifyFields($result, $data)
+    {
+        foreach ($data as $key => $value) {
+            $this->assertArrayHasKey($key, $result, 'Expected Key ' . $key . ' was not found.');
+            $this->assertEquals($value, $result[$key], $key . ' was ' . $result[$key] . ' and not expected ' . $value);
+        }
+    }
+
+    /**
+     * @param $result
+     * @param $type
+     */
+    protected function verifyTargetObject($result, $type): void
+    {
+        $this->assertArrayHasKey('targetObject', $result);
+        $this->assertEquals(1, count($result['targetObject']));
+        $this->assertIsArray($result['targetObject'][0]);
+
+        $this->assertArrayHasKey('objectType', $result['targetObject'][0]);
+        $this->assertEquals($type, $result['targetObject'][0]['objectType']);
     }
 
 }

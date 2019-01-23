@@ -14,6 +14,30 @@ class DnsRecordTest extends AbstractEndpointTest
     /** @var DnsRecord */
     protected $dnsRecordEndpoint;
 
+    protected $testData = [
+        'create' => [
+            'value' => '123.123.123.123',
+            'priority' => 0,
+            'ttl' => 333,
+            'recordType' => 'A',
+            'active' => true,
+            'enabled' => true,
+            'paused' => false,
+            'caaFlags' => 0,
+        ],
+        'update' => [
+            'value' => '12.23.34.45',
+            'priority' => 0,
+            'ttl' => 333,
+            'recordType' => 'A',
+            'active' => false,
+            'enabled' => true,
+            'paused' => false,
+            'caaFlags' => 0,
+        ]
+    ];
+
+
     protected $subDomain = 'subdomain';
     protected $subDomain2 = 'otherdomain';
 
@@ -25,6 +49,12 @@ class DnsRecordTest extends AbstractEndpointTest
         parent::setUp();
         $this->dnsRecordEndpoint = $this->Api->getDnsRecordEndpoint();
         $this->assertThat($this->dnsRecordEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\DnsRecord'));
+
+        $this->testData['create']['name'] = $this->subDomain . '.' . self::TESTDOMAIN;
+        $this->testData['create']['alternativeCname'] = $this->subDomain . '-' . self::TESTDOMAIN . '.ax4z.com.';
+
+        $this->testData['update']['name'] = $this->subDomain2 . '.' . self::TESTDOMAIN;
+        $this->testData['update']['alternativeCname'] = $this->subDomain2 . '-' . self::TESTDOMAIN . '.ax4z.com.';
     }
 
     /**
@@ -32,61 +62,30 @@ class DnsRecordTest extends AbstractEndpointTest
      */
     public function testSequence()
     {
+        $this->testDelete();
         $this->testCreate();
         $this->testUpdate();
         $this->testGetList();
-        $this->testGetListFiltered();
         $this->testDelete();
     }
 
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testCreate()
+    public function testDelete()
     {
-        $testObject = array(
-            'objectType' => 'DnsRecordVO',
-            'id' => null,
-            'modified' => null,
-            'created' => null,
-            'name' => $this->subDomain . '.' . $this->testDomain,
-            'value' => '123.123.123.123',
-            'priority' => 0,
-            'ttl' => 333,
-            'recordType' => 'A',
-            'active' => true,
-            'enabled' => true,
-            'paused' => false,
-            'upstreamOptions' =>
-                array(
-                    'backup' => false,
-                    'down' => false,
-                ),
-            'alternativeCname' => 'subdomain-myratest-org.ax4z.com.',
-            'caaFlags' => 0,
-        );
-
-        $result = $this->dnsRecordEndpoint->create(
-            $this->testDomain,
-            $this->subDomain,
-            $testObject['value'],
-            $testObject['ttl'],
-            DnsRecord::DNS_TYPE_A
-        );
-
-        $this->verifyNoError($result);
-
-        $this->assertArrayHasKey('targetObject', $result);
-
-        $this->assertEquals(1, count($result['targetObject']));
-
-        $this->assertIsArray($result['targetObject'][0]);
-
-
-        foreach ($testObject as $field => $value) {
-            $this->assertArrayHasKey($field, $result['targetObject'][0]);
-            if ($value !== null) {
-                $this->assertEquals($value, $result['targetObject'][0][$field]);
+        $list = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN);
+        foreach ($list['list'] as $item) {
+            if (
+                $item['name'] == $this->testData['create']['name']
+                || $item['name'] == $this->testData['update']['name']
+            ) {
+                $result = $this->dnsRecordEndpoint->delete(
+                    self::TESTDOMAIN,
+                    $item['id'],
+                    new \DateTime($item['modified'])
+                );
+                $this->verifyNoError($result);
             }
         }
     }
@@ -94,37 +93,44 @@ class DnsRecordTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
+    public function testCreate()
+    {
+
+        $result = $this->dnsRecordEndpoint->create(
+            self::TESTDOMAIN,
+            $this->subDomain,
+            $this->testData['create']['value'],
+            $this->testData['create']['ttl'],
+            DnsRecord::DNS_TYPE_A
+        );
+
+        $this->verifyNoError($result);
+        $this->verifyTargetObject($result, 'DnsRecordVO');
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function testUpdate()
     {
-        $list = $this->dnsRecordEndpoint->getList($this->testDomain);
+        $list = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN);
         foreach ($list['list'] as $item) {
-            if ($item['name'] == $this->subDomain . '.' . $this->testDomain) {
-                $res = $this->dnsRecordEndpoint->update(
-                    $this->testDomain, $item['id'],
+            if ($item['name'] == $this->testData['create']['name']) {
+                $result = $this->dnsRecordEndpoint->update(
+                    self::TESTDOMAIN,
+                    $item['id'],
                     new \DateTime($item['modified']),
                     $this->subDomain2,
-                    '222.222.222.222',
-                    554,
-                    DnsRecord::DNS_TYPE_A,
-                    false
+                    $this->testData['update']['value'],
+                    $this->testData['update']['ttl'],
+                    $this->testData['update']['recordType'],
+                    $this->testData['update']['active']
                 );
-                var_export($res);
-                $this->assertArrayHasKey('targetObject', $res);
-                $this->assertEquals(1, count($res['targetObject']));
-                $this->assertArrayHasKey('name', $res['targetObject'][0]);
-                $this->assertEquals($this->subDomain2 . '.' . $this->testDomain, $res['targetObject'][0]['name']);
-
-                $this->assertArrayHasKey('recordType', $res['targetObject'][0]);
-                $this->assertEquals('A', $res['targetObject'][0]['recordType']);
-
-                $this->assertArrayHasKey('recordType', $res['targetObject'][0]);
-                $this->assertEquals('A', $res['targetObject'][0]['recordType']);
-
-                $this->assertArrayHasKey('ttl', $res['targetObject'][0]);
-                $this->assertEquals(554, $res['targetObject'][0]['ttl']);
-
-                $this->assertArrayHasKey('active', $res['targetObject'][0]);
-                $this->assertEquals(false, $res['targetObject'][0]['active']);
+                var_export($result);
+                $this->verifyNoError($result);
+                $this->verifyTargetObject($result, 'DnsRecordVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
             }
         }
     }
@@ -134,7 +140,7 @@ class DnsRecordTest extends AbstractEndpointTest
      */
     public function testGetList()
     {
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain);
+        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
         var_dump($result);
         #  var_export(array_keys($result['list'][0]));
@@ -145,37 +151,14 @@ class DnsRecordTest extends AbstractEndpointTest
      */
     public function testGetListFiltered()
     {
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, 'sub');
+        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, 'sub');
         var_dump($result);
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, DnsRecord::DNS_TYPE_A);
+        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, DnsRecord::DNS_TYPE_A);
         var_dump($result);
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, null, true);
+        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, null, true);
         var_dump($result);
-        $result = $this->dnsRecordEndpoint->getList($this->testDomain, 1, null, null, false, true);
+        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, null, false, true);
         var_dump($result);
         #  var_export(array_keys($result['list'][0]));
     }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testDelete()
-    {
-        $list = $this->dnsRecordEndpoint->getList($this->testDomain);
-        foreach ($list['list'] as $item) {
-            if (
-                $item['name'] == $this->subDomain . '.' . $this->testDomain
-                || $item['name'] == $this->subDomain2 . '.' . $this->testDomain
-            ) {
-                $result = $this->dnsRecordEndpoint->delete(
-                    $this->testDomain,
-                    $item['id'],
-                    new \DateTime($item['modified'])
-                );
-                $this->verifyNoError($result);
-            }
-        }
-    }
-
-
 }
