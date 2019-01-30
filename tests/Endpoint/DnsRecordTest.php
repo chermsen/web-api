@@ -38,7 +38,6 @@ class DnsRecordTest extends AbstractEndpointTest
         ],
     ];
 
-
     protected $subDomain = 'subdomain';
     protected $subDomain2 = 'otherdomain';
 
@@ -52,22 +51,55 @@ class DnsRecordTest extends AbstractEndpointTest
         $this->assertThat($this->dnsRecordEndpoint, $this->isInstanceOf('Myracloud\WebApi\Endpoint\DnsRecord'));
 
         $this->testData['create']['name']             = $this->subDomain . '.' . self::TESTDOMAIN;
-        $this->testData['create']['alternativeCname'] = $this->subDomain . '-' . self::TESTDOMAIN . '.ax4z.com.';
+        $this->testData['create']['alternativeCname'] = $this->subDomain . '-' . str_replace('.', '-', self::TESTDOMAIN) . '.ax4z.com.';
 
         $this->testData['update']['name']             = $this->subDomain2 . '.' . self::TESTDOMAIN;
-        $this->testData['update']['alternativeCname'] = $this->subDomain2 . '-' . self::TESTDOMAIN . '.ax4z.com.';
+        $this->testData['update']['alternativeCname'] = $this->subDomain2 . '-' . str_replace('.', '-', self::TESTDOMAIN) . '.ax4z.com.';
     }
 
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testSequence()
+    public function testUpdate()
+    {
+        $this->testCreate();
+        $list = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN);
+        foreach ($list['list'] as $item) {
+            if ($item['name'] == $this->testData['create']['name']) {
+                $result = $this->dnsRecordEndpoint->update(
+                    self::TESTDOMAIN,
+                    $item['id'],
+                    new \DateTime($item['modified']),
+                    $this->subDomain2,
+                    $this->testData['update']['value'],
+                    $this->testData['update']['ttl'],
+                    $this->testData['update']['recordType'],
+                    $this->testData['update']['active']
+                );
+                $this->verifyNoError($result);
+                $this->verifyTargetObject($result, 'DnsRecordVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
+            }
+        }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testCreate()
     {
         $this->testDelete();
-        $this->testCreate();
-        $this->testUpdate();
-        $this->testGetList();
-        $this->testDelete();
+        $result = $this->dnsRecordEndpoint->create(
+            self::TESTDOMAIN,
+            $this->subDomain,
+            $this->testData['create']['value'],
+            $this->testData['create']['ttl'],
+            DnsRecord::DNS_TYPE_A
+        );
+
+        $this->verifyNoError($result);
+        $this->verifyTargetObject($result, 'DnsRecordVO');
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
     }
 
     /**
@@ -92,66 +124,22 @@ class DnsRecordTest extends AbstractEndpointTest
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testCreate()
-    {
-
-        $result = $this->dnsRecordEndpoint->create(
-            self::TESTDOMAIN,
-            $this->subDomain,
-            $this->testData['create']['value'],
-            $this->testData['create']['ttl'],
-            DnsRecord::DNS_TYPE_A
-        );
-
-        $this->verifyNoError($result);
-        $this->verifyTargetObject($result, 'DnsRecordVO');
-        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
-    }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testUpdate()
-    {
-        $list = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN);
-        foreach ($list['list'] as $item) {
-            if ($item['name'] == $this->testData['create']['name']) {
-                $result = $this->dnsRecordEndpoint->update(
-                    self::TESTDOMAIN,
-                    $item['id'],
-                    new \DateTime($item['modified']),
-                    $this->subDomain2,
-                    $this->testData['update']['value'],
-                    $this->testData['update']['ttl'],
-                    $this->testData['update']['recordType'],
-                    $this->testData['update']['active']
-                );
-                var_export($result);
-                $this->verifyNoError($result);
-                $this->verifyTargetObject($result, 'DnsRecordVO');
-                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
-            }
-        }
-    }
-
-    /**
      *
      */
     public function testGetList()
     {
+        $this->testCreate();
         $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
-        var_dump($result);
-        #  var_export(array_keys($result['list'][0]));
     }
 
     /**
      * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function testGetListFiltered()
     {
+        $this->testCreate();
         $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, 'sub');
         var_dump($result);
         $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, DnsRecord::DNS_TYPE_A);

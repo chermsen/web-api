@@ -6,6 +6,11 @@ namespace Myracloud\WebApi\Endpoint;
 
 use GuzzleHttp\RequestOptions;
 
+/**
+ * Class Certificate
+ *
+ * @package Myracloud\WebApi\Endpoint
+ */
 class Certificate extends AbstractEndpoint
 {
     /**
@@ -16,7 +21,6 @@ class Certificate extends AbstractEndpoint
 
     /**
      * @param     $domain
-     * @param int $page
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

@@ -41,12 +41,37 @@ class DomainTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testSequence()
+    public function testUpdate()
+    {
+        $this->testCreate();
+        $list = $this->domainEndpoint->getList();
+        foreach ($list['list'] as $item) {
+            if ($item['name'] == self::TESTDOMAIN) {
+                $result = $this->domainEndpoint->update(
+                    $item['id'],
+                    new \DateTime($item['modified']),
+                    !$item['autoUpdate']
+                );
+                $this->verifyNoError($result);
+
+                $this->verifyTargetObject($result, 'DomainVO');
+            }
+        }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testCreate()
     {
         $this->testDelete();
-        $this->testCreate();
-        $this->testUpdate();
-        $this->testGetList();
+        $result = $this->domainEndpoint->create(self::TESTDOMAIN);
+
+        $this->verifyNoError($result);
+
+        $this->verifyTargetObject($result, 'DomainVO');
+
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
     }
 
     /**
@@ -68,46 +93,12 @@ class DomainTest extends AbstractEndpointTest
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testCreate()
-    {
-        $result = $this->domainEndpoint->create(self::TESTDOMAIN);
-
-        $this->verifyNoError($result);
-
-        $this->verifyTargetObject($result, 'DomainVO');
-
-        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
-    }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testUpdate()
-    {
-        $list = $this->domainEndpoint->getList();
-        foreach ($list['list'] as $item) {
-            if ($item['name'] == self::TESTDOMAIN) {
-                $result = $this->domainEndpoint->update(
-                    $item['id'],
-                    new \DateTime($item['modified']),
-                    !$item['autoUpdate']
-                );
-                $this->verifyNoError($result);
-
-                $this->verifyTargetObject($result, 'DomainVO');
-            }
-        }
-    }
-
-    /**
      *
      */
     public function testGetList()
     {
+        $this->testCreate();
         $result = $this->domainEndpoint->getList();
-        var_dump($result);
         $this->verifyListResult($result);
     }
 }

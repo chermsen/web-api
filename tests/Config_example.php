@@ -10,7 +10,7 @@ class Config
     {
         return [
             'apiKey' => 'abcdef1234567890',
-            'secret' => 'abcdef1234567890'
+            'secret' => 'abcdef1234567890',
         ];
     }
 }

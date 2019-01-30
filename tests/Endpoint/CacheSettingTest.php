@@ -24,7 +24,7 @@ class CacheSettingTest extends AbstractEndpointTest
             'type'        => CacheSetting::MATCHING_TYPE_PREFIX,
             'enforce'     => false,
             'sort'        => 0,
-        ]        ,
+        ],
         'update' => [
             'path'        => '/testPathUpdate',
             'ttl'         => 333,
@@ -48,13 +48,42 @@ class CacheSettingTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testSequence()
+    public function testUpdate()
+    {
+        $this->testCreate();
+        $list = $this->cacheSettingsEndpoint->getList(self::TESTDOMAIN);
+        foreach ($list['list'] as $item) {
+            if ($item['path'] == $this->testData['create']['path']) {
+                $result = $this->cacheSettingsEndpoint->update(
+                    self::TESTDOMAIN,
+                    $item['id'],
+                    new \DateTime($item['modified']),
+                    $this->testData['update']['path'],
+                    $this->testData['update']['ttl']
+                );
+                var_export($result);
+                $this->verifyNoError($result);
+                $this->verifyTargetObject($result, 'CacheSettingVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
+            }
+        }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testCreate()
     {
         $this->testDelete();
-        $this->testCreate();
-        $this->testUpdate();
-        $this->testGetList();
-        $this->testDelete();
+        $result = $this->cacheSettingsEndpoint->create(
+            self::TESTDOMAIN,
+            $this->testData['create']['path'],
+            $this->testData['create']['ttl']
+        );
+
+        $this->verifyNoError($result);
+        $this->verifyTargetObject($result, 'CacheSettingVO');
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
     }
 
     /**
@@ -79,51 +108,11 @@ class CacheSettingTest extends AbstractEndpointTest
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testCreate()
-    {
-        $result = $this->cacheSettingsEndpoint->create(
-            self::TESTDOMAIN,
-            $this->testData['create']['path'],
-            $this->testData['create']['ttl']
-        );
-
-        var_dump($result);
-
-        $this->verifyNoError($result);
-        $this->verifyTargetObject($result, 'CacheSettingVO');
-        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
-    }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testUpdate()
-    {
-        $list = $this->cacheSettingsEndpoint->getList(self::TESTDOMAIN);
-        foreach ($list['list'] as $item) {
-            if ($item['path'] == $this->testData['create']['path']) {
-                $result = $this->cacheSettingsEndpoint->update(
-                    self::TESTDOMAIN,
-                    $item['id'],
-                    new \DateTime($item['modified']),
-                    $this->testData['update']['path'],
-                    $this->testData['update']['ttl']
-                );
-                var_export($result);
-                $this->verifyNoError($result);
-                $this->verifyTargetObject($result, 'CacheSettingVO');
-                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
-            }
-        }
-    }
-
-    /**
      *
      */
     public function testGetList()
     {
+        $this->testCreate();
         $result = $this->cacheSettingsEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
         var_dump($result);

@@ -6,6 +6,11 @@ namespace Myracloud\WebApi\Endpoint;
 
 use GuzzleHttp\RequestOptions;
 
+/**
+ * Class IpFilter
+ *
+ * @package Myracloud\WebApi\Endpoint
+ */
 class IpFilter extends AbstractEndpoint
 {
     /**

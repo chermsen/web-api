@@ -7,6 +7,7 @@ use Myracloud\WebApi\Endpoint\Redirect;
 
 /**
  * Class RedirectTest
+ *
  * @package Myracloud\Tests\Endpoint
  */
 class RedirectTest extends AbstractEndpointTest
@@ -18,19 +19,19 @@ class RedirectTest extends AbstractEndpointTest
 
     protected $testData = [
         'create' => [
-            'source' => '/test_source',
-            'destination' => '/test_dest',
-            'type' => Redirect::REDIRECT_TYPE_REDIRECT,
+            'source'        => '/test_source',
+            'destination'   => '/test_dest',
+            'type'          => Redirect::REDIRECT_TYPE_REDIRECT,
             'subDomainName' => self::TESTDOMAIN . '.',
-            'matchingType' => Redirect::MATCHING_TYPE_PREFIX
+            'matchingType'  => Redirect::MATCHING_TYPE_PREFIX,
         ],
         'update' => [
-            'source' => '/test_source_changed',
-            'destination' => '/test_destination_changed',
-            'type' => Redirect::REDIRECT_TYPE_REDIRECT,
+            'source'        => '/test_source_changed',
+            'destination'   => '/test_destination_changed',
+            'type'          => Redirect::REDIRECT_TYPE_REDIRECT,
             'subDomainName' => self::TESTDOMAIN . '.',
-            'matchingType' => Redirect::MATCHING_TYPE_PREFIX
-        ]
+            'matchingType'  => Redirect::MATCHING_TYPE_PREFIX,
+        ],
     ];
 
     /**
@@ -46,13 +47,40 @@ class RedirectTest extends AbstractEndpointTest
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function testSequence()
+    public function testUpdate()
+    {
+        $this->testCreate();
+        $list = $this->redirectEndpoint->getList(self::TESTDOMAIN);
+        foreach ($list['list'] as $item) {
+            if ($item['source'] == $this->testData['create']['source']) {
+                $result = $this->redirectEndpoint->update(
+                    self::TESTDOMAIN, $item['id'],
+                    new \DateTime($item['modified']),
+                    $this->testData['update']['source'],
+                    $this->testData['update']['destination']
+                );
+
+                $this->verifyNoError($result);
+                $this->verifyTargetObject($result, 'DnsRedirectVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
+            }
+        }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function testCreate()
     {
         $this->testDelete();
-        $this->testCreate();
-        $this->testUpdate();
-        $this->testGetList();
-        $this->testDelete();
+        $result = $this->redirectEndpoint->create(
+            self::TESTDOMAIN,
+            $this->testData['create']['source'],
+            $this->testData['create']['destination']
+        );
+        $this->verifyNoError($result);
+        $this->verifyTargetObject($result, 'DnsRedirectVO');
+        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
     }
 
     /**
@@ -77,49 +105,11 @@ class RedirectTest extends AbstractEndpointTest
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testCreate()
-    {
-
-        $result = $this->redirectEndpoint->create(
-            self::TESTDOMAIN,
-            $this->testData['create']['source'],
-            $this->testData['create']['destination']
-        );
-        var_dump($result);
-        $this->verifyNoError($result);
-        $this->verifyTargetObject($result, 'DnsRedirectVO');
-        $this->verifyFields($result['targetObject'][0], $this->testData['create']);
-    }
-
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function testUpdate()
-    {
-        $list = $this->redirectEndpoint->getList(self::TESTDOMAIN);
-        foreach ($list['list'] as $item) {
-            if ($item['source'] == $this->testData['create']['source']) {
-                $result = $this->redirectEndpoint->update(
-                    self::TESTDOMAIN, $item['id'],
-                    new \DateTime($item['modified']),
-                    $this->testData['update']['source'],
-                    $this->testData['update']['destination']
-                );
-
-                $this->verifyNoError($result);
-                $this->verifyTargetObject($result, 'DnsRedirectVO');
-                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
-            }
-        }
-    }
-
-    /**
      *
      */
     public function testGetList()
     {
+        $this->testCreate();
         $result = $this->redirectEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
         var_dump($result);

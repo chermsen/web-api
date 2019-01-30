@@ -6,6 +6,11 @@ namespace Myracloud\WebApi\Endpoint;
 
 use GuzzleHttp\RequestOptions;
 
+/**
+ * Class SubdomainSetting
+ *
+ * @package Myracloud\WebApi\Endpoint
+ */
 class SubdomainSetting extends AbstractEndpoint
 {
     /**

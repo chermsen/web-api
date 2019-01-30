@@ -82,7 +82,6 @@ class Signature
      */
     public function getSignature($signingString)
     {
-
         $key       = hash_hmac('sha256', $this->date, 'MYRA' . $this->secret);
         $key       = hash_hmac('sha256', 'myra-api-request', $key);
         $signature = base64_encode(hash_hmac('sha512', $signingString, $key, true));
