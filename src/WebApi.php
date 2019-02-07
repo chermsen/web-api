@@ -77,8 +77,6 @@ class WebApi
         $stack->setHandler(new CurlHandler());
 
         $signature = new Signature($secret, $apiKey);
-
-        #$stack->push(Middleware::prepareBody());
         $stack->push(
             Middleware::mapRequest(
                 function (RequestInterface $request) use ($signature) {
