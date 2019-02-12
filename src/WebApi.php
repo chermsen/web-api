@@ -108,7 +108,7 @@ class WebApi
     }
 
     /**
-     * @param $name
+     * @param $className
      * @return mixed
      */
     private function getInstance($className)
@@ -130,7 +130,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return CacheSetting
      * @throws \Exception
      */
     public function getCacheSettingsEndpoint()
@@ -139,7 +139,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return Certificate
      * @throws \Exception
      */
     public function getCertificateEndpoint()
@@ -148,7 +148,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return SubdomainSetting
      * @throws \Exception
      */
     public function getSubdomainSettingsEndpoint()
@@ -157,7 +157,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return DnsRecord
      * @throws \Exception
      */
     public function getDnsRecordEndpoint()
@@ -166,7 +166,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return Statistic
      * @throws \Exception
      */
     public function getStatisticEndpoint()
@@ -175,7 +175,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return Maintenance
      * @throws \Exception
      */
     public function getMaintenanceEndpoint()
@@ -184,7 +184,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return IpFilter
      * @throws \Exception
      */
     public function getIpFilterEndpoint()
@@ -193,7 +193,7 @@ class WebApi
     }
 
     /**
-     * @return Redirect
+     * @return CacheClear
      * @throws \Exception
      */
     public function getCacheClearEndpoint()

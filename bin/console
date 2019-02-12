@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+use Myracloud\WebApi\Command\CacheClearCommand;
+use Myracloud\WebApi\Command\MaintenanceCommand;
+
+require_once(__DIR__ . '/../vendor/autoload.php');
+
+set_time_limit(0);
+$app = new Symfony\Component\Console\Application();
+$app->addCommands([
+    new CacheClearCommand(),
+    new MaintenanceCommand(),
+]);
+$app->run();
