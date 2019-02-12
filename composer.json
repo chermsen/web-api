@@ -1,0 +1,30 @@
+{
+    "name"             : "myra-security-gmbh/web-api",
+    "description"      : "Php implementation of the myracloud.com api",
+    "keywords"         : [
+        "myracloud",
+        "api"
+    ],
+    "homepage"         : "https://myrasecurity.com",
+    "type"             : "library",
+    "license"          : "MIT",
+    "minimum-stability": "stable",
+    "require"          : {
+        "php"              : ">=7.1.0",
+        "ext-json"         : "*",
+        "guzzlehttp/guzzle": "^6.0"
+    },
+    "require-dev"      : {
+        "phpunit/phpunit": "^7.5"
+    },
+    "autoload"         : {
+        "psr-4": {
+            "Myracloud\\WebApi\\": "src/"
+        }
+    },
+    "autoload-dev"     : {
+        "psr-4": {
+            "Myracloud\\Tests\\": "tests/"
+        }
+    }
+}
