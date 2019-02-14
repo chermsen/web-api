@@ -22,7 +22,7 @@ class CacheSetting extends AbstractEndpoint
      * @param int $page
      * @return mixed
      */
-    public function getList($domain, int $page = 1)
+    public function getList($domain, $page = 1)
     {
         $uri = $this->uri . '/' . $domain . '/' . $page;
 

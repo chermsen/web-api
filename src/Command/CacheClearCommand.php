@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Myracloud\WebApi\Command;
 
 use GuzzleHttp\Exception\TransferException;
+use Myracloud\WebApi\Endpoint\AbstractEndpoint;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,7 +39,7 @@ class CacheClearCommand extends AbstractCommand
         try {
             $options = $this->resolveOptions($input, $output);
 
-            $endpoint = $this->webapi->getCacheClearEndpoint();
+            $endpoint = $this->getEndpoint();
             $return   = $endpoint->clear($options['fqdn'], $options['fqdn'], $options['cleanupRule'], $options['recursive']);
         } catch (TransferException $e) {
             $output->writeln('<fg=red;options=bold>Error:</> ' . $e->getMessage());
@@ -54,5 +55,37 @@ class CacheClearCommand extends AbstractCommand
         $this->checkResult($return, $output);
     }
 
+    /**
+     * @return AbstractEndpoint
+     */
+    protected function getEndpoint(): AbstractEndpoint
+    {
+        return $this->webapi->getCacheClearEndpoint();
+    }
 
+    /**
+     * @param                 $data
+     * @param OutputInterface $output
+     */
+    protected function writeTable($data, OutputInterface $output)
+    {
+    }
+
+    /**
+     * @param array           $options
+     * @param OutputInterface $output
+     * @return mixed
+     */
+    protected function OpCreate(array $options, OutputInterface $output)
+    {
+    }
+
+    /**
+     * @param array           $options
+     * @param OutputInterface $output
+     * @return mixed
+     */
+    protected function OpUpdate(array $options, OutputInterface $output)
+    {
+    }
 }

@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace Myracloud\WebApi\Command;
 
+use Myracloud\WebApi\Endpoint\AbstractEndpoint;
+use Myracloud\WebApi\Endpoint\Maintenance;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -15,11 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MaintenanceCommand extends AbstractCommand
 {
-    const OPERATION_CREATE = 'create';
-    const OPERATION_DELETE = 'delete';
-    const OPERATION_LIST   = 'list';
-    const OPERATION_UPDATE = 'update';
-
     /**
      *
      */
@@ -61,29 +57,6 @@ EOF
         parent::configure();
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return int|void|null
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $options = $this->resolveOptions($input, $output);
-        switch ($options['operation']) {
-
-            case self::OPERATION_CREATE:
-                $this->OpCreate($options, $output);
-                break;
-            default:
-            case self::OPERATION_LIST:
-                $this->OpList($options, $output);
-                break;
-            case self::OPERATION_DELETE:
-                $this->OpDelete($options, $output);
-                break;
-        }
-    }
 
     /**
      * @param array           $options
@@ -93,7 +66,6 @@ EOF
      */
     protected function OpCreate(array $options, OutputInterface $output)
     {
-        $endpoint = $this->webapi->getMaintenanceEndpoint();
         if ($options['contentFile'] == null) {
             throw new \RuntimeException(sprintf('You need to define the maintenance page to display by passing a file via --contentFile'));
         } elseif (!is_readable(realpath($options['contentFile']))) {
@@ -110,7 +82,8 @@ EOF
         } else {
             $end = new \DateTime($options['end']);
         }
-        $return = $endpoint->create($options['fqdn'], $start, $end, file_get_contents($options['contentFile']));
+        $endpoint = $this->getEndpoint();
+        $return   = $endpoint->create($options['fqdn'], $start, $end, file_get_contents($options['contentFile']));
         $this->checkResult($return, $output);
         $this->writeTable($return['targetObject'], $output);
         if ($output->isVerbose()) {
@@ -119,10 +92,18 @@ EOF
     }
 
     /**
+     * @return Maintenance
+     */
+    protected function getEndpoint(): AbstractEndpoint
+    {
+        return $this->webapi->getMaintenanceEndpoint();
+    }
+
+    /**
      * @param                 $data
      * @param OutputInterface $output
      */
-    private function writeTable($data, OutputInterface $output)
+    protected function writeTable($data, OutputInterface $output)
     {
         $table = new Table($output);
         $table->setHeaders(['Id', 'Created', 'Modified', 'Fqdn', 'Start', 'End', 'Active']);
@@ -145,40 +126,45 @@ EOF
     /**
      * @param array           $options
      * @param OutputInterface $output
+     * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function OpList(array $options, OutputInterface $output)
+    protected function OpUpdate(array $options, OutputInterface $output)
     {
-        $endpoint = $this->webapi->getMaintenanceEndpoint();
-        $return   = $endpoint->getList($options['fqdn'], $options['page']);
-        $this->checkResult($return, $output);
-        $this->writeTable($return['list'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
+        /**@var $endpoint Maintenance */
+
+        $existing = $this->findById($options);
+
+        if (empty($options['start'])) {
+            $startDate = new \DateTime($existing['start']);
+        } else {
+            $startDate = new \DateTime($options['start']);
         }
-    }
-
-    /**
-     * @param array           $options
-     * @param OutputInterface $output
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    protected function OpDelete(array $options, OutputInterface $output): void
-    {
-        $endpoint = $this->webapi->getMaintenanceEndpoint();
-
-        if ($options['id'] == null) {
-            throw new \RuntimeException('You need to define the id of the maintenance object to delete via --id');
+        if (empty($options['end'])) {
+            $endDate = new \DateTime($existing['end']);
+        } else {
+            $endDate = new \DateTime($options['end']);
         }
 
-        $return = $endpoint->delete($options['fqdn'], $options['id'], new \DateTime());
+        if (empty($options['contentFile'])) {
+            $content = $existing['content'];
+        } elseif (!is_readable(realpath($options['contentFile']))) {
+            throw new \RuntimeException(sprintf('Could not find given file "%s".', $options['contentFile']));
+        } else {
+            $content = file_get_contents($options['contentFile']);
+        }
+
+        $endpoint = $this->getEndpoint();
+        $return   = $endpoint->update(
+            $options['fqdn'],
+            $existing['id'],
+            new \DateTime($existing['modified']),
+            $startDate,
+            $endDate,
+            $content
+        );
         $this->checkResult($return, $output);
         $this->writeTable($return['targetObject'], $output);
-
-        if (count($return['targetObject']) == 0) {
-            $output->writeln('<fg=yellow;options=bold>Notice:</> No objects where deleted. Did you pass a valid Id?');
-        }
-
         if ($output->isVerbose()) {
             print_r($return);
         }
