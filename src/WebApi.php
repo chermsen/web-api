@@ -99,7 +99,6 @@ class WebApi
 
     /**
      * @return Domain
-     * @throws \Exception
      */
     public function getDomainEndpoint()
     {
@@ -122,7 +121,6 @@ class WebApi
 
     /**
      * @return Redirect
-     * @throws \Exception
      */
     public function getRedirectEndpoint()
     {
@@ -131,7 +129,6 @@ class WebApi
 
     /**
      * @return CacheSetting
-     * @throws \Exception
      */
     public function getCacheSettingsEndpoint()
     {
@@ -140,7 +137,6 @@ class WebApi
 
     /**
      * @return Certificate
-     * @throws \Exception
      */
     public function getCertificateEndpoint()
     {
@@ -149,7 +145,6 @@ class WebApi
 
     /**
      * @return SubdomainSetting
-     * @throws \Exception
      */
     public function getSubdomainSettingsEndpoint()
     {
@@ -158,7 +153,6 @@ class WebApi
 
     /**
      * @return DnsRecord
-     * @throws \Exception
      */
     public function getDnsRecordEndpoint()
     {
@@ -167,7 +161,6 @@ class WebApi
 
     /**
      * @return Statistic
-     * @throws \Exception
      */
     public function getStatisticEndpoint()
     {
@@ -176,7 +169,6 @@ class WebApi
 
     /**
      * @return Maintenance
-     * @throws \Exception
      */
     public function getMaintenanceEndpoint()
     {
@@ -185,7 +177,6 @@ class WebApi
 
     /**
      * @return IpFilter
-     * @throws \Exception
      */
     public function getIpFilterEndpoint()
     {
@@ -194,7 +185,6 @@ class WebApi
 
     /**
      * @return CacheClear
-     * @throws \Exception
      */
     public function getCacheClearEndpoint()
     {

@@ -5,7 +5,10 @@ declare(strict_types=1);
 use Myracloud\WebApi\Command\CacheClearCommand;
 use Myracloud\WebApi\Command\MaintenanceCommand;
 
-require_once(__DIR__ . '/../vendor/autoload.php');
+define('ROOTDIR', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..'));
+
+require_once(ROOTDIR . '/vendor/autoload.php');
+
 
 set_time_limit(0);
 $app = new Symfony\Component\Console\Application();

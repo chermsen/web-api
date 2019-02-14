@@ -18,11 +18,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AbstractCommand extends Command
 {
-    /** @var OptionsResolver */
-    protected $resolver;
     /** @var WebApi */
     protected $webapi;
 
+    /**
+     *
+     */
     protected function configure()
     {
         parent::configure();
@@ -38,10 +39,16 @@ class AbstractCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        if (file_exists('../config.php')) {
-            include '../config.php';
-            $input->setOption('apiKey', $config['apikey']);
-            $input->setOption('secret', $config['secret']);
+        $confPath = ROOTDIR . DIRECTORY_SEPARATOR . 'config.php';
+        $config   = [];
+        if (file_exists($confPath)) {
+            include $confPath;
+            if (array_key_exists('apikey', $config)) {
+                $input->setOption('apiKey', $config['apikey']);
+            }
+            if (array_key_exists('apikey', $config)) {
+                $input->setOption('secret', $config['secret']);
+            }
         }
     }
 
@@ -56,7 +63,6 @@ class AbstractCommand extends Command
     protected function resolveOptions(InputInterface $input, OutputInterface $output)
     {
         $options = array_merge($input->getArguments(), $input->getOptions());
-
         if (empty($options['apiKey']) || empty($options['secret'])) {
             throw new \Exception('apiKey and secret have to be provided either by parameter or config file.');
         }
@@ -64,5 +70,28 @@ class AbstractCommand extends Command
         $this->webapi = new WebApi($options['apiKey'], $options['secret'], 'beta.myracloud.com');
 
         return $options;
+    }
+
+    /**
+     * @param                 $data
+     * @param OutputInterface $output
+     */
+    protected function checkResult($data, OutputInterface $output)
+    {
+        if (is_array($data) && array_key_exists('error', $data)) {
+            if ($data['error'] == true) {
+                if (array_key_exists('exception', $data)) {
+                    $output->writeln('<fg=red;options=bold>API Exception:</> ' . $data['exception']['type'] . ' ' . $data['exception']['message']);
+                }
+                foreach ($data['violationList'] as $violation) {
+                    $output->writeln('<fg=red;options=bold>API Error:</> ' . $violation['message']);
+                }
+            } else {
+                $output->writeln('<fg=green;options=bold>Success</> ');
+            }
+        }
+        if ($output->isVerbose()) {
+            print_r($data);
+        }
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Myracloud\WebApi\Command;
 
+use GuzzleHttp\Exception\TransferException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,22 +35,23 @@ class CacheClearCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        try {
+            $options = $this->resolveOptions($input, $output);
 
-        $options = $this->resolveOptions($input, $output);
+            $endpoint = $this->webapi->getCacheClearEndpoint();
+            $return   = $endpoint->clear($options['fqdn'], $options['fqdn'], $options['cleanupRule'], $options['recursive']);
+        } catch (TransferException $e) {
+            $output->writeln('<fg=red;options=bold>Error:</> ' . $e->getMessage());
+            $output->writeln('<fg=red;options=bold>Error:</> Are you using the correct key/secret?');
+            $output->writeln('<fg=red;options=bold>Error:</> Is the domain attached to the account associated with this key/secret combination?');
 
-        $endpoint = $this->webapi->getCacheClearEndpoint();
+            return;
+        } catch (\Exception $e) {
+            $output->writeln('<fg=red;options=bold>Error:</>' . $e->getMessage());
 
-        $return = $endpoint->clear($options['fqdn'], $options['fqdn'], $options['cleanupRule'], $options['recursive']);
-
-        if (is_array($return) && array_key_exists('error', $return) && $return['error'] == true) {
-            foreach ($return['violationList'] as $violation) {
-                $output->writeln('API Error: ' . $violation['message']);
-            }
+            return;
         }
-
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->checkResult($return, $output);
     }
 
 

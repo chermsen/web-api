@@ -54,12 +54,17 @@ class MaintenanceTest extends AbstractEndpointTest
 
         foreach ($list['list'] as $item) {
             if ($item['content'] == $this->testData['create']['content']) {
+                $start = new \DateTime($item['start']);
+                $start->add(new \DateInterval('P7D'));
+                $end = new \DateTime($item['end']);
+                $end->add(new \DateInterval('P11D'));
+
                 $result = $this->maintenanceEndpoint->update(
                     self::TESTDOMAIN,
                     $item['id'],
-                    new \DateTime($item['modified']),
-                    new \DateTime($item['start']),
-                    new \DateTime($item['end']),
+                    new \DateTime(),
+                    $start,
+                    $end,
                     $this->testData['update']['content']
                 );
                 var_export($result);

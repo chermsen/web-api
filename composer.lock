@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9eb9700a49c7b170e2679f4f1cf3c7fb",
+    "content-hash": "06073945be8fc013a6a79739e6208565",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -453,60 +453,6 @@
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
             "time": "2019-01-25T14:35:16+00:00"
-        },
-        {
-            "name": "symfony/options-resolver",
-            "version": "v3.4.22",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/options-resolver.git",
-                "reference": "0f1cbaee6b356e72c0e025f9a4e9d76a25bf4793"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/0f1cbaee6b356e72c0e025f9a4e9d76a25bf4793",
-                "reference": "0f1cbaee6b356e72c0e025f9a4e9d76a25bf4793",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.5.9|>=7.0.8"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\OptionsResolver\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony OptionsResolver Component",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "config",
-                "configuration",
-                "options"
-            ],
-            "time": "2019-01-16T09:39:14+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -2047,8 +1993,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.1.0",
-        "ext-json": "*",
-        "ext-mbstring": "*"
+        "ext-json": "*"
     },
     "platform-dev": []
 }
