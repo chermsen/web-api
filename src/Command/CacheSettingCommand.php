@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class CacheSetting
+ * Class CacheSettingCommand
  *
  * @package Myracloud\API\Command
  */

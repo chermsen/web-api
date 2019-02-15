@@ -29,7 +29,7 @@ class DnsRecord extends AbstractEndpoint
      */
     public function getList(
         $domain,
-        int $page = 1,
+        $page = 1,
         $search = null,
         $recordType = null,
         $activeOnly = false,

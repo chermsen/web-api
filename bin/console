@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use Myracloud\WebApi\Command\CacheClearCommand;
 use Myracloud\WebApi\Command\CacheSettingCommand;
+use Myracloud\WebApi\Command\DnsCommand;
 use Myracloud\WebApi\Command\MaintenanceCommand;
 
 define('ROOTDIR', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..'));
 
 require_once(ROOTDIR . '/vendor/autoload.php');
-
 
 set_time_limit(0);
 $app = new Symfony\Component\Console\Application();
@@ -17,5 +17,6 @@ $app->addCommands([
     new CacheClearCommand(),
     new CacheSettingCommand(),
     new MaintenanceCommand(),
+    new DnsCommand(),
 ]);
 $app->run();
