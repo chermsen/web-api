@@ -54,7 +54,6 @@ abstract class AbstractCommand extends Command
      */
     protected function configure()
     {
-        parent::configure();
         $this->addOption('apiKey', 'k', InputOption::VALUE_REQUIRED, 'Api key to authenticate against Myra API.', null);
         $this->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret to authenticate against Myra API.', null);
         $this->addArgument('fqdn', InputArgument::REQUIRED, 'Domain that should be used.');

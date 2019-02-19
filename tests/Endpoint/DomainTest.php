@@ -22,9 +22,14 @@ class DomainTest extends AbstractEndpointTest
             'name'        => self::TESTDOMAIN,
             'maintenance' => false,
             'paused'      => false,
+            'autoUpdate'  => false,
             'owned'       => true,
             'reversed'    => false,
             'environment' => 'live',
+        ],
+        'update' => [
+            'name'       => self::TESTDOMAIN,
+            'autoUpdate' => true,
         ],
     ];
 
@@ -50,11 +55,12 @@ class DomainTest extends AbstractEndpointTest
                 $result = $this->domainEndpoint->update(
                     $item['id'],
                     new \DateTime($item['modified']),
-                    !$item['autoUpdate']
+                    $this->testData['update']['autoUpdate']
                 );
                 $this->verifyNoError($result);
 
                 $this->verifyTargetObject($result, 'DomainVO');
+                $this->verifyFields($result['targetObject'][0], $this->testData['update']);
             }
         }
     }
@@ -83,13 +89,14 @@ class DomainTest extends AbstractEndpointTest
         foreach ($list['list'] as $item) {
             if ($item['name'] == self::TESTDOMAIN) {
                 $result = $this->domainEndpoint->delete(
-                    null,
+                    $item['name'],
                     $item['id'],
                     new \DateTime($item['modified'])
                 );
                 $this->verifyNoError($result);
             }
         }
+        $list = $this->domainEndpoint->getList();
     }
 
     /**

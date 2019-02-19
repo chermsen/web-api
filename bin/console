@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Myracloud\WebApi\Command\CacheClearCommand;
 use Myracloud\WebApi\Command\CacheSettingCommand;
 use Myracloud\WebApi\Command\DnsCommand;
+use Myracloud\WebApi\Command\DomainCommand;
 use Myracloud\WebApi\Command\MaintenanceCommand;
 
 define('ROOTDIR', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..'));
@@ -18,5 +19,6 @@ $app->addCommands([
     new CacheSettingCommand(),
     new MaintenanceCommand(),
     new DnsCommand(),
+    new DomainCommand(),
 ]);
 $app->run();
