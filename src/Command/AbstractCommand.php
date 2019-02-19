@@ -173,7 +173,7 @@ abstract class AbstractCommand extends Command
                     $output->writeln('<fg=red;options=bold>API Exception:</> ' . $data['exception']['type'] . ' ' . $data['exception']['message']);
                 }
                 foreach ($data['violationList'] as $violation) {
-                    $output->writeln('<fg=red;options=bold>API Error:</> ' . $violation['message']);
+                    $output->writeln('<fg=red;options=bold>API Error:</> ' . (array_key_exists('propertyPath', $violation) ? ($violation['propertyPath'] . ' ') : '') . $violation['message']);
                 }
             } else {
                 $output->writeln('<fg=green;options=bold>Success</> ');
