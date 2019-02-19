@@ -80,30 +80,6 @@ abstract class AbstractCommand extends Command
     }
 
     /**
-     * @param array $options
-     * @return array
-     */
-    protected function findById(array $options)
-    {
-        if ($options['id'] == null) {
-            throw new \RuntimeException('You need to define the id of the object via --id');
-        }
-        $endpoint = $this->getEndpoint();
-        $return   = $endpoint->getList($options['fqdn'], $options['page']);
-        foreach ($return['list'] as $item) {
-            if ($item['id'] == $options['id']) {
-                return $item;
-            }
-        }
-        throw new \RuntimeException('Could not find an object with the passed id.');
-    }
-
-    /**
-     * @return AbstractEndpoint
-     */
-    abstract protected function getEndpoint(): AbstractEndpoint;
-
-    /**
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -181,6 +157,11 @@ abstract class AbstractCommand extends Command
     }
 
     /**
+     * @return AbstractEndpoint
+     */
+    abstract protected function getEndpoint(): AbstractEndpoint;
+
+    /**
      * @param                 $data
      * @param OutputInterface $output
      */
@@ -233,8 +214,11 @@ abstract class AbstractCommand extends Command
         if ($options['id'] == null) {
             throw new \RuntimeException('You need to define the id of the object to delete via --id');
         }
+
         $endpoint = $this->getEndpoint();
-        $return   = $endpoint->delete($options['fqdn'], $options['id'], new \DateTime());
+        $existing = $this->findById($options);
+
+        $return = $endpoint->delete($options['fqdn'], $options['id'], new \DateTime($existing['modified']));
         $this->checkResult($return, $output);
         $this->writeTable($return['targetObject'], $output);
 
@@ -245,6 +229,25 @@ abstract class AbstractCommand extends Command
         if ($output->isVerbose()) {
             print_r($return);
         }
+    }
+
+    /**
+     * @param array $options
+     * @return array
+     */
+    protected function findById(array $options)
+    {
+        if ($options['id'] == null) {
+            throw new \RuntimeException('You need to define the id of the object via --id');
+        }
+        $endpoint = $this->getEndpoint();
+        $return   = $endpoint->getList($options['fqdn'], $options['page']);
+        foreach ($return['list'] as $item) {
+            if ($item['id'] == $options['id']) {
+                return $item;
+            }
+        }
+        throw new \RuntimeException('Could not find an object with the passed id.');
     }
 
 }
