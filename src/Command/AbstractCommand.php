@@ -54,6 +54,9 @@ abstract class AbstractCommand extends Command
      */
     protected function configure()
     {
+        $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
+        $this->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page to show when listing objects.', 1);
+        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
         $this->addOption('apiKey', 'k', InputOption::VALUE_REQUIRED, 'Api key to authenticate against Myra API.', null);
         $this->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret to authenticate against Myra API.', null);
         $this->addArgument('fqdn', InputArgument::REQUIRED, 'Domain that should be used.');

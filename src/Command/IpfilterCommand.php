@@ -30,9 +30,6 @@ class IpfilterCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('myracloud:api:ipfilter');
-        $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
-        $this->addOption('page', 'p', InputOption::VALUE_REQUIRED, 'Page to show when listing objects.', 1);
-        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
         $this->addOption('value', null, InputOption::VALUE_REQUIRED, 'Filter pattern', null);
         $this->addOption('type', 't', InputOption::VALUE_REQUIRED, 'Matching type', AbstractEndpoint::IPFILTER_TYPE_BLACKLIST);
 

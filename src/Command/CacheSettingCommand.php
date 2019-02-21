@@ -29,12 +29,9 @@ class CacheSettingCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('myracloud:api:cacheSetting');
-        $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
         $this->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Path to match against', null);
         $this->addOption('ttl', null, InputOption::VALUE_REQUIRED, 'time to live', null);
         $this->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of match (' . implode(',', self::$matchingTypes) . ')', null);
-        $this->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page to show when listing objects.', 1);
-        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
         $this->setDescription('CacheSetting allows you to define/modify Cache rules.');
         parent::configure();
     }

@@ -34,14 +34,11 @@ class DnsCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('myracloud:api:dns');
-        $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
         $this->addOption('ttl', null, InputOption::VALUE_REQUIRED, 'time to live', null);
         $this->addOption('sub', null, InputOption::VALUE_REQUIRED, 'subdomain', null);
         $this->addOption('ip', null, InputOption::VALUE_REQUIRED, 'IpAddress', null);
-        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
         $this->addOption('sslcert', null, InputOption::VALUE_REQUIRED, 'Path to a SslCert', null);
         $this->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of match (' . implode(',', self::$dnsTypes) . ')', null);
-        $this->addOption('page', 'p', InputOption::VALUE_REQUIRED, 'Page to show when listing objects.', 1);
 
         $this->setDescription('Dns commands allow you to edit DNS Records.');
         parent::configure();

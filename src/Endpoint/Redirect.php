@@ -18,21 +18,6 @@ class Redirect extends AbstractEndpoint
     protected $epName = 'redirects';
 
     /**
-     * @param     $domain
-     * @param int $page
-     * @return mixed
-     */
-    public function getList($domain, $page = 1)
-    {
-        $uri = $this->uri . '/' . $domain . '/' . $page;
-
-        /** @var \GuzzleHttp\Psr7\Response $res */
-        $res = $this->client->get($uri);
-
-        return $this->handleResponse($res);
-    }
-
-    /**
      * @param        $domain
      * @param        $source
      * @param        $destination

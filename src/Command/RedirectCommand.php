@@ -30,9 +30,6 @@ class RedirectCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('myracloud:api:redirect');
-        $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
-        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
-        $this->addOption('page', 'p', InputOption::VALUE_REQUIRED, 'Page to show when listing objects.', 1);
 
         $this->addOption('source', null, InputOption::VALUE_REQUIRED, 'Source path', null);
         $this->addOption('dest', null, InputOption::VALUE_REQUIRED, 'destination path', null);

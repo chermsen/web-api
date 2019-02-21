@@ -41,6 +41,7 @@ class IpFilterTest extends AbstractEndpointTest
      */
     public function testGetList()
     {
+        $this->testCreate();
         $result = $this->ipFilterEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
         var_export($result);

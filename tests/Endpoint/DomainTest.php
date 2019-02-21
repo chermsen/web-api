@@ -85,7 +85,7 @@ class DomainTest extends AbstractEndpointTest
      */
     public function testDelete()
     {
-        $list = $this->domainEndpoint->getList();
+        $list = $this->domainEndpoint->getList(self::TESTDOMAIN);
         foreach ($list['list'] as $item) {
             if ($item['name'] == self::TESTDOMAIN) {
                 $result = $this->domainEndpoint->delete(
@@ -96,7 +96,7 @@ class DomainTest extends AbstractEndpointTest
                 $this->verifyNoError($result);
             }
         }
-        $list = $this->domainEndpoint->getList();
+        $list = $this->domainEndpoint->getList(self::TESTDOMAIN);
     }
 
     /**
@@ -105,7 +105,7 @@ class DomainTest extends AbstractEndpointTest
     public function testGetList()
     {
         $this->testCreate();
-        $result = $this->domainEndpoint->getList();
+        $result = $this->domainEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
     }
 }

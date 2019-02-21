@@ -18,12 +18,15 @@ class Domain extends AbstractEndpoint
     protected $epName = 'domains';
 
     /**
+     * @param     $domain
+     * @param int $page
      * @return mixed
      */
-    public function getList()
+    public function getList($domain, $page = 1)
     {
+        $uri = $this->uri . '/' . $page;
         /** @var \GuzzleHttp\Psr7\Response $res */
-        $res = $this->client->get($this->uri);
+        $res = $this->client->get($uri);
 
         return $this->handleResponse($res);
     }

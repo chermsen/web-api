@@ -18,6 +18,7 @@ class SubdomainSetting extends AbstractEndpoint
      */
     protected $epName = 'subdomainSetting';
 
+
     /**
      * @param     $domain
      * @return mixed

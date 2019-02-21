@@ -22,12 +22,9 @@ class MaintenanceCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('myracloud:api:maintenance');
-        $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
         $this->addOption('contentFile', 'f', InputOption::VALUE_REQUIRED, 'HTML file that contains the maintenance page.');
         $this->addOption('start', 'a', InputOption::VALUE_REQUIRED, 'Time to start the maintenance from.', null);
         $this->addOption('end', 'b', InputOption::VALUE_REQUIRED, 'Time to end the maintenance.', null);
-        $this->addOption('page', 'p', InputOption::VALUE_REQUIRED, 'Page to show when listing maintenance objects.', 1);
-        $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
 
 
         $this->setDescription('The maintenance command allows you to list, create, update, and delete maintenance pages.');

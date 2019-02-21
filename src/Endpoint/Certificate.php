@@ -20,21 +20,6 @@ class Certificate extends AbstractEndpoint
 
 
     /**
-     * @param     $domain
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function getList($domain)
-    {
-        $uri = $this->uri . '/' . $domain;
-
-        /** @var \GuzzleHttp\Psr7\Response $response */
-        $response = $this->client->request('GET', $uri);
-
-        return $this->handleResponse($response);
-    }
-
-    /**
      * @param        $domain
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
