@@ -32,9 +32,9 @@ class SubdomainCommand extends AbstractCommand
         $this->addArgument('fqdn', InputArgument::REQUIRED, 'Subdomain that should be used.');
         $this->addArgument('key', InputArgument::OPTIONAL, 'Setting to write');
         $this->addArgument('value', InputArgument::OPTIONAL, 'Value to write');
-        $this->setDescription(
+        $this->setDescription('The Subdomain command allows you to list, and update the settings for a Subdomain.');
+        $this->setHelp(
             <<<EOF
-The Subdomain command allows you to list, and update the settings for a Subdomain.
 Subdomains have to be created and configured via the Dns Command.
 fqdn must be a configured subdomain.
 Only passing fqdn without additional options will display all known settings.
@@ -43,7 +43,7 @@ Only passing fqdn without additional options will display all known settings.
 bin/console myracloud:api:subdomain <fqdn>
 
 <fg=yellow>Example usage to update a Settings value:</>
-bin/console myracloud:api:maintenance <fqdn> <setting_name> <value>
+bin/console myracloud:api:subdomain <fqdn> <setting_name> <value>
 
 For boolen values, please use true and false.
 Passing the value null will revert the setting to it's default.

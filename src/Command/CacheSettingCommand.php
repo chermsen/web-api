@@ -33,6 +33,19 @@ class CacheSettingCommand extends AbstractCommand
         $this->addOption('ttl', null, InputOption::VALUE_REQUIRED, 'time to live', null);
         $this->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of match (' . implode(',', self::$matchingTypes) . ')', null);
         $this->setDescription('CacheSetting allows you to define/modify Cache rules.');
+        $this->setHelp(<<<'TAG'
+Only passing fqdn without additional options will display all known settings.
+
+<fg=yellow>Example Listing all Cache Settings:</>
+bin/console myracloud:api:cacheSetting <fqdn>
+
+<fg=yellow>Example creating a setting for a Caching TTL of 1200 seconds for all resources under the page root:</>
+bin/console myracloud:api:cacheSetting <fqdn> -o create --path / --ttl 1200 --type prefix
+
+<fg=yellow>To delete a Setting use:</>
+bin/console myracloud:api:cacheSetting <fqdn> -o delete --id <id>
+TAG
+        );
         parent::configure();
     }
 
