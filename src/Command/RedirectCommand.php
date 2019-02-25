@@ -39,6 +39,26 @@ class RedirectCommand extends AbstractCommand
 
 
         $this->setDescription('Redirect commands allow you to edit Url Redirects.');
+        $this->setHelp(sprintf(<<<'TAG'
+Only passing fqdn without additional options will list all Redirect entries.
+
+<fg=yellow>Example Listing all Redirect entries:</>
+bin/console myracloud:api:redirect <fqdn>
+
+<fg=yellow>Example creating a new Redirect entry:</>
+bin/console myracloud:api:redirect <fqdn> -o create --source <pattern-to-match> --dest <target-url>  --type <redirection-type> --matchtype <type>
+
+<fg=yellow>Example updating a existing Redirect entry:</>
+bin/console myracloud:api:redirect <fqdn> -o update --id <id-from-list> --source <pattern-to-match> --dest <target-url> --type <redirection-type> --matchtype <matchtype>
+
+<redirection-type> can be %s
+<matchtype> can be %s
+
+<fg=yellow>Example deleting a existing Redirect entry:</>
+bin/console myracloud:api:redirect -o delete --id <id-from-list>
+TAG
+                , implode(',', self::$redirTypes), implode(',', self::$matchTypes))
+        );
         parent::configure();
     }
 

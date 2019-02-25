@@ -41,6 +41,29 @@ class DnsCommand extends AbstractCommand
         $this->addOption('type', null, InputOption::VALUE_REQUIRED, 'Type of match (' . implode(',', self::$dnsTypes) . ')', null);
 
         $this->setDescription('Dns commands allow you to edit DNS Records.');
+        $this->setHelp(sprintf(<<<'TAG'
+Only passing fqdn without additional options will list all Dns entries.
+
+<fg=yellow>Example Listing all Dns entries:</>
+bin/console myracloud:api:dns <fqdn>
+
+<fg=yellow>Example creating a new dns entry:</>
+bin/console myracloud:api:dns <fqdn> -o create --sub <name> --ttl <ttl> --type <type> --ip <ipaddress/value>
+
+Please note, additional rules for the format of the ipaddress/value apply depending on the entry type.
+
+<fg=yellow>Example updating a existing Dns entry:</>
+bin/console myracloud:api:dns <fqdn> -o update --id <id-from-list> <any-param>
+
+Update an existing record, use the 'update' operation with an existing id. You can add any of the create params (ttl,type,ip,sub) so overwrite the existing value.
+
+<fg=yellow>Example Deleting a existing Dns entry:</>
+bin/console myracloud:api:dns <fqdn> -o delete --id <id-from-list>
+
+valid types are %s
+
+TAG
+            , implode(',', self::$dnsTypes)));
         parent::configure();
     }
 

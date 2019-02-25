@@ -42,8 +42,8 @@ bin/console myracloud:api:cacheSetting <fqdn>
 <fg=yellow>Example creating a setting for a Caching TTL of 1200 seconds for all resources under the page root:</>
 bin/console myracloud:api:cacheSetting <fqdn> -o create --path / --ttl 1200 --type prefix
 
-<fg=yellow>To delete a Setting use:</>
-bin/console myracloud:api:cacheSetting <fqdn> -o delete --id <id>
+<fg=yellow>Example Deleting a existing Cache Setting:</>
+bin/console myracloud:api:cacheSetting <fqdn> -o delete --id <id-from-list>
 TAG
         );
         parent::configure();

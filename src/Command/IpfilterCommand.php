@@ -34,6 +34,27 @@ class IpfilterCommand extends AbstractCommand
         $this->addOption('type', 't', InputOption::VALUE_REQUIRED, 'Matching type', AbstractEndpoint::IPFILTER_TYPE_BLACKLIST);
 
         $this->setDescription('Domain commands allow you to edit Ip based filters.');
+
+        $this->setHelp(<<<'TAG'
+Only passing fqdn without additional options will list all IpFilter entries.
+
+<fg=yellow>Example Listing all IpFilter entries:</>
+bin/console myracloud:api:ipfilter <fqdn>
+
+<fg=yellow>Example creating a new IpFilter entry:</>
+bin/console myracloud:api:ipfilter <fqdn> -o create --value <filter-pattern> --type <match-type>
+
+<fg=yellow>Example updating a existing IpFilter entry:</>
+bin/console myracloud:api:ipfilter <fqdn> -o update --id <id-from-list> --value <filter-pattern> --type <match-type>
+
+<match-type> can be WHITELIST of BLACKLIST.
+
+<fg=yellow>Example deleting a existing IpFilter entry:</>
+bin/console myracloud:api:ipfilter -o delete --id <id-from-list>
+
+TAG
+        );
+
         parent::configure();
     }
 
@@ -107,7 +128,7 @@ class IpfilterCommand extends AbstractCommand
                 $item['created'],
                 $item['modified'],
                 $item['value'],
-                $item['type'],
+                @$item['type'],
                 $item['enabled'] ?: 0,
             ]);
         }

@@ -29,26 +29,17 @@ class MaintenanceCommand extends AbstractCommand
 
         $this->setDescription('The maintenance command allows you to list, create, update, and delete maintenance pages.');
         $year = date('Y');
-        $this->setHelp(sprintf(<<<EOF
-The maintenance command allows you to list, create, update, and delete Maintenance pages.
-To delete a Maintenance, please provide the Id visible via list.
-
-<fg=green>Valid operations are: %s.</>
+        $this->setHelp(<<<EOF
 
 <fg=yellow>Example usage to list maintenance pages:</>
-bin/console myracloud:api:maintenance -o list <fqdn>
+bin/console myracloud:api:maintenance <fqdn> -o list 
 
 <fg=yellow>Example usage of maintenance to enqueue a new maintenance page:</>
-bin/console myracloud:api:maintenance -f file.html -a "$year-03-30 00:00:00" -b "$year-04-01 00:00:00" <fqdn>
+bin/console myracloud:api:maintenance <fqdn> -f <local-html-file-path> -a "$year-03-30 00:00:00" -b "$year-04-01 00:00:00"
 
 <fg=yellow>Example usage to remove a existing maintenance:</>
-bin/console myracloud:api:maintenance -o delete --id 1234" <fqdn>
+bin/console myracloud:api:maintenance <fqdn> -o delete --id <id-from-list> 
 EOF
-                , implode(', ', [
-                    self::OPERATION_LIST,
-                    self::OPERATION_CREATE,
-                    self::OPERATION_DELETE,
-                ]))
         );
 
         parent::configure();

@@ -34,6 +34,20 @@ class DomainCommand extends AbstractCommand
         $this->addOption('name', null, InputOption::VALUE_REQUIRED, 'Name of the domain', null);
 
         $this->setDescription('Domain commands allow you to edit Domain entries.');
+        $this->setHelp(<<<'TAG'
+Calling this command without additional options will list all Domain entries.
+
+<fg=yellow>Example Listing all Domain entries:</>
+bin/console myracloud:api:domain
+
+<fg=yellow>Example creating a new Domain entry:</>
+bin/console myracloud:api:domain -o create --name <fqdn>
+
+<fg=yellow>Example deleting a existing Domain entry:</>
+bin/console myracloud:api:domain -o delete --id <id-from-list>
+
+TAG
+        );
     }
 
     /**
