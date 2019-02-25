@@ -72,9 +72,7 @@ EOF
             $this->OpList($options, $output, $key);
 
         } catch (TransferException $e) {
-            $output->writeln('<fg=red;options=bold>Error:</> ' . $e->getMessage());
-            $output->writeln('<fg=red;options=bold>Error:</> Are you using the correct key/secret?');
-            $output->writeln('<fg=red;options=bold>Error:</> Is the domain attached to the account associated with this key/secret combination?');
+            $this->handleTransferException($e, $output);
 
             return;
         } catch (\Exception $e) {
@@ -196,6 +194,7 @@ EOF
     /**
      * @param array           $options
      * @param OutputInterface $output
+     * @param                 $keyName
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function OpListSingle(array $options, OutputInterface $output, $keyName)

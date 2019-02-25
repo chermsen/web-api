@@ -105,11 +105,7 @@ TAG
             true,
             $options['sslcert'] ? file_get_contents(realpath($options['sslcert'])) : null
         );
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 
     /**
@@ -118,47 +114,6 @@ TAG
     protected function getEndpoint(): AbstractEndpoint
     {
         return $this->webapi->getDnsRecordEndpoint();
-    }
-
-    /**
-     * @param                 $data
-     * @param OutputInterface $output
-     */
-    protected function writeTable($data, OutputInterface $output)
-    {
-        $table = new Table($output);
-        $table->setHeaders([
-            'Id',
-            'Created',
-            'Modified',
-            'Name',
-            'Value',
-            'Priority',
-            'ttl',
-            'Type',
-            'Enabled',
-            'Paused',
-            'Alternative N.',
-            'caaFlags',
-        ]);
-
-        foreach ($data as $item) {
-            $table->addRow([
-                array_key_exists('id', $item) ? $item['id'] : null,
-                $item['created'],
-                $item['modified'],
-                $item['name'],
-                $item['value'],
-                $item['priority'],
-                $item['ttl'],
-                $item['recordType'],
-                $item['enabled'] ?: 0,
-                @$item['paused'] ?: 0,
-                @$item['alternativeCname'],
-                $item['caaFlags'],
-            ]);
-        }
-        $table->render();
     }
 
     /**
@@ -204,10 +159,47 @@ TAG
             $existing['active'],
             $options['sslcert'] ? file_get_contents(realpath($options['sslcert'])) : null
         );
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
+        $this->handleTableReturn($return, $output);
+    }
+
+    /**
+     * @param                 $data
+     * @param OutputInterface $output
+     */
+    protected function writeTable($data, OutputInterface $output)
+    {
+        $table = new Table($output);
+        $table->setHeaders([
+            'Id',
+            'Created',
+            'Modified',
+            'Name',
+            'Value',
+            'Priority',
+            'ttl',
+            'Type',
+            'Enabled',
+            'Paused',
+            'Alternative N.',
+            'caaFlags',
+        ]);
+
+        foreach ($data as $item) {
+            $table->addRow([
+                array_key_exists('id', $item) ? $item['id'] : null,
+                $item['created'],
+                $item['modified'],
+                $item['name'],
+                $item['value'],
+                $item['priority'],
+                $item['ttl'],
+                $item['recordType'],
+                $item['enabled'] ?: 0,
+                @$item['paused'] ?: 0,
+                @$item['alternativeCname'],
+                $item['caaFlags'],
+            ]);
         }
+        $table->render();
     }
 }

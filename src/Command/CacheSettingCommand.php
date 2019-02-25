@@ -69,11 +69,7 @@ TAG
         }
         $endpoint = $this->getEndpoint();
         $return   = $endpoint->create($options['fqdn'], $options['path'], $options['ttl'], $options['type']);
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 
     /**
@@ -112,10 +108,11 @@ TAG
     /**
      * @param array           $options
      * @param OutputInterface $output
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function OpUpdate(array $options, OutputInterface $output)
     {
+        /** @var CacheSetting $endpoint */
         $endpoint = $this->getEndpoint();
         $existing = $this->findById($options);
 
@@ -134,10 +131,6 @@ TAG
         }
 
         $return = $endpoint->update($options['fqdn'], $existing['id'], new \DateTime($existing['modified']), $options['path'], $options['ttl'], $options['type']);
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 }

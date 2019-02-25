@@ -5,6 +5,7 @@ namespace Myracloud\WebApi\Command;
 
 use GuzzleHttp\Exception\TransferException;
 use Myracloud\WebApi\Endpoint\AbstractEndpoint;
+use Myracloud\WebApi\Endpoint\CacheClear;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,14 +50,13 @@ TAG
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $options = $this->resolveOptions($input, $output);
 
+            $options = $this->resolveOptions($input, $output);
+            /** @var CacheClear $endpoint */
             $endpoint = $this->getEndpoint();
             $return   = $endpoint->clear($options['fqdn'], $options['fqdn'], $options['cleanupRule'], $options['recursive']);
         } catch (TransferException $e) {
-            $output->writeln('<fg=red;options=bold>Error:</> ' . $e->getMessage());
-            $output->writeln('<fg=red;options=bold>Error:</> Are you using the correct key/secret?');
-            $output->writeln('<fg=red;options=bold>Error:</> Is the domain attached to the account associated with this key/secret combination?');
+            $this->handleTransferException($e, $output);
 
             return;
         } catch (\Exception $e) {

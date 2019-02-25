@@ -72,11 +72,7 @@ EOF
         }
         $endpoint = $this->getEndpoint();
         $return   = $endpoint->create($options['fqdn'], $start, $end, file_get_contents($options['contentFile']));
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 
     /**
@@ -151,10 +147,6 @@ EOF
             $endDate,
             $content
         );
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 }

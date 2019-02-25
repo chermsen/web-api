@@ -84,11 +84,7 @@ TAG
             boolval($options['autoupdate'])
 
         );
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 
     /**
@@ -158,13 +154,14 @@ TAG
             boolval($options['autoupdate'])
         );
 
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleTableReturn($return, $output);
     }
 
+    /**
+     * @param array           $options
+     * @param OutputInterface $output
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     protected function OpDelete(array $options, OutputInterface $output)
     {
         $options['fqdn'] = null;
@@ -175,15 +172,6 @@ TAG
 
         $endpoint = $this->getEndpoint();
         $return   = $endpoint->delete($existing['name'], $options['id'], new \DateTime($existing['modified']));
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-
-        if (count($return['targetObject']) == 0) {
-            $output->writeln('<fg=yellow;options=bold>Notice:</> No objects where deleted. Did you pass a valid Id?');
-        }
-
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleDeleteReturn($return, $output);
     }
 }

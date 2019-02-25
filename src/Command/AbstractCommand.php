@@ -73,10 +73,10 @@ abstract class AbstractCommand extends Command
         $config   = [];
         if (file_exists($confPath)) {
             include $confPath;
-            if (array_key_exists('apikey', $config)) {
+            if (empty($input->getOption('apiKey')) && array_key_exists('apikey', $config)) {
                 $input->setOption('apiKey', $config['apikey']);
             }
-            if (array_key_exists('apikey', $config)) {
+            if (empty($input->getOption('secret')) && array_key_exists('secret', $config)) {
                 $input->setOption('secret', $config['secret']);
             }
         }
@@ -112,9 +112,7 @@ abstract class AbstractCommand extends Command
                     break;
             }
         } catch (TransferException $e) {
-            $output->writeln('<fg=red;options=bold>Error:</> ' . $e->getMessage());
-            $output->writeln('<fg=red;options=bold>Error:</> Are you using the correct key/secret?');
-            $output->writeln('<fg=red;options=bold>Error:</> Is the domain attached to the account associated with this key/secret combination?');
+            $this->handleTransferException($e, $output);
 
             return;
         } catch (\Exception $e) {
@@ -179,7 +177,7 @@ abstract class AbstractCommand extends Command
                     $output->writeln('<fg=red;options=bold>API Error:</> ' . (array_key_exists('propertyPath', $violation) ? ($violation['propertyPath'] . ' ') : '') . $violation['message']);
                 }
             } else {
-                $output->writeln('<fg=green;options=bold>Success</> ');
+                $output->writeln('<fg=green;options=bold>Request Successful</> ');
             }
         }
         if ($output->isVerbose()) {
@@ -222,16 +220,7 @@ abstract class AbstractCommand extends Command
         $existing = $this->findById($options);
 
         $return = $endpoint->delete($options['fqdn'], $options['id'], new \DateTime($existing['modified']));
-        $this->checkResult($return, $output);
-        $this->writeTable($return['targetObject'], $output);
-
-        if (count($return['targetObject']) == 0) {
-            $output->writeln('<fg=yellow;options=bold>Notice:</> No objects where deleted. Did you pass a valid Id?');
-        }
-
-        if ($output->isVerbose()) {
-            print_r($return);
-        }
+        $this->handleDeleteReturn($return, $output);
     }
 
     /**
@@ -253,4 +242,45 @@ abstract class AbstractCommand extends Command
         throw new \RuntimeException('Could not find an object with the passed id.');
     }
 
+    /**
+     * @param                 $return
+     * @param OutputInterface $output
+     */
+    protected function handleDeleteReturn($return, OutputInterface $output): void
+    {
+        $this->checkResult($return, $output);
+        $this->writeTable($return['targetObject'], $output);
+
+        if (count($return['targetObject']) == 0) {
+            $output->writeln('<fg=yellow;options=bold>Notice:</> No objects where deleted. Did you pass a valid Id?');
+        }
+
+        if ($output->isVerbose()) {
+            print_r($return);
+        }
+    }
+
+    /**
+     * @param TransferException $e
+     * @param OutputInterface   $output
+     */
+    protected function handleTransferException(TransferException $e, OutputInterface $output)
+    {
+        $output->writeln('<fg=red;options=bold>Error:</> ' . $e->getMessage());
+        $output->writeln('<fg=red;options=bold>Error:</> Are you using the correct key/secret?');
+        $output->writeln('<fg=red;options=bold>Error:</> Is the domain attached to the account associated with this key/secret combination?');
+    }
+
+    /**
+     * @param                 $return
+     * @param OutputInterface $output
+     */
+    protected function handleTableReturn($return, OutputInterface $output): void
+    {
+        $this->checkResult($return, $output);
+        $this->writeTable($return['targetObject'], $output);
+        if ($output->isVerbose()) {
+            print_r($return);
+        }
+    }
 }
