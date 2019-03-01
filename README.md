@@ -24,6 +24,11 @@ In this case you can simply attach the signature middleware to handle Authentica
      )
     );
 
+This package also contains a commandline client for most API endpoints. 
+use 'php bin/console list' to list all supported command. Use --help for usage details.
+
+    php bin/console myracloud:api:dns -k <apiKey> -s <apiSecret> -o list <domain>
+
 Installation
 ------------
 via Composer:
