@@ -99,7 +99,7 @@ class SubdomainSettingTest extends AbstractEndpointTest
      */
     public function testGet()
     {
-        $result = $this->subdomainSettingEndpoint->getList('mail.argel.de');
+        $result = $this->subdomainSettingEndpoint->getList(self::TESTDOMAIN);
         var_dump($result);
         $this->verifyNoError($result);
         $this->assertArrayHasKey('targetObject', $result);

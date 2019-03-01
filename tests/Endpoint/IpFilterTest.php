@@ -52,7 +52,7 @@ class IpFilterTest extends AbstractEndpointTest
      */
     public function testCreate()
     {
-
+        $this->testDelete();
         $result = $this->ipFilterEndpoint->create(
             self::TESTDOMAIN,
             $this->testData['create']['type'],

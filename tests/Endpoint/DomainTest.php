@@ -49,7 +49,7 @@ class DomainTest extends AbstractEndpointTest
     public function testUpdate()
     {
         $this->testCreate();
-        $list = $this->domainEndpoint->getList();
+        $list = $this->domainEndpoint->getList(self::TESTDOMAIN);
         foreach ($list['list'] as $item) {
             if ($item['name'] == self::TESTDOMAIN) {
                 $result = $this->domainEndpoint->update(
