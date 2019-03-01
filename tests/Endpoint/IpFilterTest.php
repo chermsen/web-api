@@ -41,6 +41,7 @@ class IpFilterTest extends AbstractEndpointTest
      */
     public function testGetList()
     {
+        $this->testCreate();
         $result = $this->ipFilterEndpoint->getList(self::TESTDOMAIN);
         $this->verifyListResult($result);
         var_export($result);
@@ -51,7 +52,7 @@ class IpFilterTest extends AbstractEndpointTest
      */
     public function testCreate()
     {
-
+        $this->testDelete();
         $result = $this->ipFilterEndpoint->create(
             self::TESTDOMAIN,
             $this->testData['create']['type'],
@@ -59,7 +60,6 @@ class IpFilterTest extends AbstractEndpointTest
 
         );
 
-        var_dump($result);
         $this->verifyNoError($result);
         $this->verifyTargetObject($result, 'IpFilterVO');
         $this->verifyFields($result['targetObject'][0], $this->testData['create']);
@@ -94,7 +94,6 @@ class IpFilterTest extends AbstractEndpointTest
 
         foreach ($list['list'] as $item) {
             if ($item['value'] == $this->testData['create']['value']) {
-
                 $result = $this->ipFilterEndpoint->update(
                     self::TESTDOMAIN,
                     $item['id'],

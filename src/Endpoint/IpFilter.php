@@ -19,22 +19,6 @@ class IpFilter extends AbstractEndpoint
     protected $epName = 'ipfilter';
 
     /**
-     * @param     $domain
-     * @param int $page
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function getList($domain, int $page = 1)
-    {
-        $uri = $this->uri . '/' . $domain . '/' . $page;
-
-        /** @var \GuzzleHttp\Psr7\Response $response */
-        $response = $this->client->request('GET', $uri);
-
-        return $this->handleResponse($response);
-    }
-
-    /**
      * @param $domain
      * @param $type
      * @param $value

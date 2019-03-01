@@ -18,21 +18,6 @@ class CacheSetting extends AbstractEndpoint
     protected $epName = 'cacheSettings';
 
     /**
-     * @param     $domain
-     * @param int $page
-     * @return mixed
-     */
-    public function getList($domain, int $page = 1)
-    {
-        $uri = $this->uri . '/' . $domain . '/' . $page;
-
-        /** @var \GuzzleHttp\Psr7\Response $res */
-        $res = $this->client->get($uri);
-
-        return $this->handleResponse($res);
-    }
-
-    /**
      * @param        $domain
      * @param        $path
      * @param        $ttl

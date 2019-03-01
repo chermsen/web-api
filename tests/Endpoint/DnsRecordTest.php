@@ -20,7 +20,7 @@ class DnsRecordTest extends AbstractEndpointTest
             'value'      => '123.123.123.123',
             'priority'   => 0,
             'ttl'        => 333,
-            'recordType' => 'A',
+            'recordType' => DnsRecord::DNS_TYPE_A,
             'active'     => true,
             'enabled'    => true,
             'paused'     => false,
@@ -30,7 +30,29 @@ class DnsRecordTest extends AbstractEndpointTest
             'value'      => '12.23.34.45',
             'priority'   => 0,
             'ttl'        => 333,
-            'recordType' => 'A',
+            'recordType' => DnsRecord::DNS_TYPE_A,
+            'active'     => false,
+            'enabled'    => true,
+            'paused'     => false,
+            'caaFlags'   => 0,
+        ],
+        'list1'  => [
+            'value'      => '22.222.222.222',
+            'name'       => 'someOtherName',
+            'priority'   => 0,
+            'ttl'        => 112233,
+            'recordType' => DnsRecord::DNS_TYPE_A,
+            'active'     => false,
+            'enabled'    => true,
+            'paused'     => false,
+            'caaFlags'   => 0,
+        ],
+        'list2'  => [
+            'value'      => 'test test test',
+            'name'       => 'testname',
+            'priority'   => 0,
+            'ttl'        => 9999,
+            'recordType' => DnsRecord::DNS_TYPE_TXT,
             'active'     => false,
             'enabled'    => true,
             'paused'     => false,
@@ -94,7 +116,7 @@ class DnsRecordTest extends AbstractEndpointTest
             $this->subDomain,
             $this->testData['create']['value'],
             $this->testData['create']['ttl'],
-            DnsRecord::DNS_TYPE_A
+            $this->testData['create']['recordType']
         );
 
         $this->verifyNoError($result);
@@ -139,15 +161,63 @@ class DnsRecordTest extends AbstractEndpointTest
      */
     public function testGetListFiltered()
     {
-        $this->testCreate();
-        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, 'sub');
-        var_dump($result);
+        $this->dnsRecordEndpoint->create(
+            self::TESTDOMAIN,
+            $this->subDomain,
+            $this->testData['create']['value'],
+            $this->testData['create']['ttl'],
+            $this->testData['create']['recordType'],
+            $this->testData['create']['active']
+        );
+        $this->dnsRecordEndpoint->create(
+            self::TESTDOMAIN,
+            $this->testData['list1']['name'],
+            $this->testData['list1']['value'],
+            $this->testData['list1']['ttl'],
+            $this->testData['list1']['recordType'],
+            $this->testData['list1']['active']
+        );
+        $this->dnsRecordEndpoint->create(
+            self::TESTDOMAIN,
+            $this->testData['list2']['name'],
+            $this->testData['list2']['value'],
+            $this->testData['list2']['ttl'],
+            $this->testData['list2']['recordType'],
+            $this->testData['list2']['active']
+
+        );
+        /**
+         * List only A Records
+         */
         $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, DnsRecord::DNS_TYPE_A);
-        var_dump($result);
+        $this->verifyNoError($result);
+
+        $this->assertEquals(2, count($result['list']));
+        foreach ($result['list'] as $item) {
+            $this->assertEquals(DnsRecord::DNS_TYPE_A, $item['recordType']);
+        }
+
+        /**
+         * List only active
+         */
         $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, null, true);
-        var_dump($result);
-        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, null, null, false, true);
-        var_dump($result);
-        #  var_export(array_keys($result['list'][0]));
+
+        $this->verifyNoError($result);
+
+        $this->assertEquals(1, count($result['list']));
+        foreach ($result['list'] as $item) {
+            $this->assertEquals(true, $item['active']);
+        }
+
+        /**
+         * List only with substring in name
+         */
+        $result = $this->dnsRecordEndpoint->getList(self::TESTDOMAIN, 1, 'sub');
+        $this->verifyNoError($result);
+
+        $this->assertEquals(1, count($result['list']));
+        foreach ($result['list'] as $item) {
+            $this->assertContains('sub', $item['name']);
+        }
     }
 }

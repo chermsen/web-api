@@ -64,11 +64,18 @@ class Signature
      */
     public function getStringToSign(RequestInterface $request)
     {
+        $uri = $request->getUri();
+
+        $signUri = $uri->getPath();
+        if (!empty($uri->getQuery())) {
+            $signUri .= '?' . $uri->getQuery();
+        }
+
         return
             implode('#', [
                 md5($request->getBody()->getContents()),
                 $request->getMethod(),
-                $request->getUri()->getPath(),
+                $signUri,
                 $this->contentType,
                 $this->date,
             ]);

@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+use Myracloud\WebApi\Command\CacheClearCommand;
+use Myracloud\WebApi\Command\CacheSettingCommand;
+use Myracloud\WebApi\Command\DnsCommand;
+use Myracloud\WebApi\Command\DomainCommand;
+use Myracloud\WebApi\Command\IpfilterCommand;
+use Myracloud\WebApi\Command\MaintenanceCommand;
+use Myracloud\WebApi\Command\RedirectCommand;
+use Myracloud\WebApi\Command\SubdomainCommand;
+
+define('ROOTDIR', realpath(__DIR__ . DIRECTORY_SEPARATOR . '..'));
+
+require_once(ROOTDIR . '/vendor/autoload.php');
+
+set_time_limit(0);
+$app = new Symfony\Component\Console\Application();
+$app->addCommands([
+    new CacheClearCommand(),
+    new CacheSettingCommand(),
+    new MaintenanceCommand(),
+    new DnsCommand(),
+    new DomainCommand(),
+    new IpfilterCommand(),
+    new RedirectCommand(),
+    new SubdomainCommand(),
+]);
+$app->run();

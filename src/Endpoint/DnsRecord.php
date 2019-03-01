@@ -29,32 +29,31 @@ class DnsRecord extends AbstractEndpoint
      */
     public function getList(
         $domain,
-        int $page = 1,
+        $page = 1,
         $search = null,
         $recordType = null,
         $activeOnly = false,
         $loadbalancedOnly = false
     ) {
-        $uri = $this->uri . '/' . $domain . '/' . $page;
+        $options = [];
+        $uri     = $this->uri . '/' . $domain . '/' . $page;
 
-        $queryParams = [];
         if (!empty($search)) {
-            $queryParams['search'] = $search;
+            $options[RequestOptions::QUERY]['search'] = $search;
         }
         if (!empty($recordType)) {
             $this->validateDnsType($recordType);
-            $queryParams['recordTypes'] = $recordType;
+            $options[RequestOptions::QUERY]['recordTypes'] = $recordType;
         }
         if ($activeOnly == true) {
-            $queryParams['activeOnly'] = true;
+            $options[RequestOptions::QUERY]['activeOnly'] = 'true';
         }
         if ($loadbalancedOnly == true) {
-            $queryParams['loadbalancer'] = true;
+            $options[RequestOptions::QUERY]['loadbalancer'] = 'true';
         }
 
-        $uri .= '?' . http_build_query($queryParams);
         /** @var \GuzzleHttp\Psr7\Response $res */
-        $res = $this->client->get($uri);
+        $res = $this->client->request('GET', $uri, $options);
 
         return $this->handleResponse($res);
     }

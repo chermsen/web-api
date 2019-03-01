@@ -18,12 +18,15 @@ class Domain extends AbstractEndpoint
     protected $epName = 'domains';
 
     /**
+     * @param     $domain
+     * @param int $page
      * @return mixed
      */
-    public function getList()
+    public function getList($domain, $page = 1)
     {
+        $uri = $this->uri . '/' . $page;
         /** @var \GuzzleHttp\Psr7\Response $res */
-        $res = $this->client->get($this->uri);
+        $res = $this->client->get($uri);
 
         return $this->handleResponse($res);
     }
@@ -34,7 +37,7 @@ class Domain extends AbstractEndpoint
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function create($name, bool $autoUpdate = false)
+    public function create($name, $autoUpdate = false)
     {
         $options[RequestOptions::JSON] =
             [
@@ -59,10 +62,10 @@ class Domain extends AbstractEndpoint
     {
         $options[RequestOptions::JSON] =
             [
+                'name'     => $domain,
                 'id'       => $id,
                 'modified' => $modified->format('c'),
             ];
-
         /** @var \GuzzleHttp\Psr7\Response $res */
         $res = $this->client->request('DELETE', $this->uri, $options);
 
