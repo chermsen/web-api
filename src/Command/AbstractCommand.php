@@ -59,7 +59,9 @@ abstract class AbstractCommand extends Command
         $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
         $this->addOption('apiKey', 'k', InputOption::VALUE_REQUIRED, 'Api key to authenticate against Myra API.', null);
         $this->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret to authenticate against Myra API.', null);
+        $this->addOption('endpoint', 'ep', InputOption::VALUE_OPTIONAL, 'API endpoint.', 'app.myracloud.com');
         $this->addArgument('fqdn', InputArgument::REQUIRED, 'Domain that should be used.');
+
 
     }
 
@@ -78,6 +80,9 @@ abstract class AbstractCommand extends Command
             }
             if (empty($input->getOption('secret')) && array_key_exists('secret', $config)) {
                 $input->setOption('secret', $config['secret']);
+            }
+            if (empty($input->getOption('endpoint')) && array_key_exists('endpoint', $config)) {
+                $input->setOption('endpoint', $config['endpoint']);
             }
         }
     }
@@ -136,8 +141,7 @@ abstract class AbstractCommand extends Command
         if (empty($options['apiKey']) || empty($options['secret'])) {
             throw new \Exception('apiKey and secret have to be provided either by parameter or config file.');
         }
-
-        $this->webapi = new WebApi($options['apiKey'], $options['secret'], 'beta.myracloud.com');
+        $this->webapi = new WebApi($options['apiKey'], $options['secret'], $options['endpoint']);
 
         return $options;
     }
