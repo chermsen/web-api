@@ -111,8 +111,9 @@ abstract class AbstractEndpoint
     }
 
     /**
-     * @param     $domain
-     * @param int $page
+     * @param       $domain
+     * @param int   $page
+     * @param array $params
      * @return mixed
      */
     public function getList($domain, $page = 1)

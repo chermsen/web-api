@@ -16,19 +16,17 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\API\Command
  */
-class CacheClearCommand extends AbstractCommand
+class CacheClearCommand extends AbstractCrudCommand
 {
     /**
      *
      */
     protected function configure()
     {
+        parent::configure();
         $this->setName('myracloud:api:cacheClear');
         $this->addOption('cleanupRule', 'c', InputOption::VALUE_REQUIRED, 'Rule that describes which files should be removed from the cache.', '*');
         $this->addOption('recursive', 'r', InputOption::VALUE_NONE, 'Should the rule applied recursively.');
-        $this->addOption('apiKey', 'k', InputOption::VALUE_REQUIRED, 'Api key to authenticate against Myra API.', null);
-        $this->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret to authenticate against Myra API.', null);
-        $this->addArgument('fqdn', InputArgument::REQUIRED, 'Domain that should be used.');
         $this->setDescription('CacheClear commands allows you to do a cache clear via Myra API.');
         $this->getName();
         $this->setHelp(<<<'TAG'

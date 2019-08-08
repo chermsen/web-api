@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\WebApi\Command
  */
-class DomainCommand extends AbstractCommand
+class DomainCommand extends AbstractCrudCommand
 {
 
     /**
@@ -23,12 +23,10 @@ class DomainCommand extends AbstractCommand
      */
     protected function configure()
     {
+        parent::configure();
         $this->setName('myracloud:api:domain');
-        $this->addOption('apiKey', 'k', InputOption::VALUE_REQUIRED, 'Api key to authenticate against Myra API.', null);
-        $this->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret to authenticate against Myra API.', null);
         $this->addOption('operation', 'o', InputOption::VALUE_REQUIRED, '', self::OPERATION_LIST);
         $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'Id to Update/Delete');
-        $this->addOption('page', 'p', InputOption::VALUE_REQUIRED, 'Page to show when listing objects.', 1);
 
         $this->addOption('autoupdate', null, InputOption::VALUE_REQUIRED, 'Auto update flag for the domain', null);
         $this->addOption('name', null, InputOption::VALUE_REQUIRED, 'Name of the domain', null);
@@ -118,9 +116,9 @@ TAG
         foreach ($data as $item) {
             $table->addRow([
                 array_key_exists('id', $item) ? $item['id'] : null,
-                $item['created'],
-                $item['modified'],
-                $item['name'],
+                @$item['created'],
+                @$item['modified'],
+                @$item['name'],
                 @$item['autoUpdate'] ?: 0,
                 @$item['maintenance'] ?: 0,
                 @$item['paused'] ?: 0,

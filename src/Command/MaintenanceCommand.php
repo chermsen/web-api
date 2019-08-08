@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\API\Command
  */
-class MaintenanceCommand extends AbstractCommand
+class MaintenanceCommand extends AbstractCrudCommand
 {
     /**
      *

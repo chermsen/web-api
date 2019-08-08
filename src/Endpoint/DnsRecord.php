@@ -25,7 +25,7 @@ class DnsRecord extends AbstractEndpoint
      * @param bool $activeOnly
      * @param bool $loadbalancedOnly
      * @return mixed
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getList(
         $domain,

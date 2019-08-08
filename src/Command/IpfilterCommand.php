@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\WebApi\Command
  */
-class IpfilterCommand extends AbstractCommand
+class IpfilterCommand extends AbstractCrudCommand
 {
     static $filterType = [
         AbstractEndpoint::IPFILTER_TYPE_WHITELIST,
