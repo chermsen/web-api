@@ -14,6 +14,7 @@ use Myracloud\WebApi\Endpoint\DnsRecord;
 use Myracloud\WebApi\Endpoint\Domain;
 use Myracloud\WebApi\Endpoint\IpFilter;
 use Myracloud\WebApi\Endpoint\Maintenance;
+use Myracloud\WebApi\Endpoint\Networks;
 use Myracloud\WebApi\Endpoint\Redirect;
 use Myracloud\WebApi\Endpoint\Statistic;
 use Myracloud\WebApi\Endpoint\SubdomainSetting;
@@ -191,5 +192,11 @@ class WebApi
         return $this->getInstance(CacheClear::class);
     }
 
-
+    /**
+     * @return Networks
+     */
+    public function getNetworksEndpoint()
+    {
+        return $this->getInstance(Networks::class);
+    }
 }

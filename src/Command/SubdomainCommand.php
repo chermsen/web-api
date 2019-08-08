@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\WebApi\Command
  */
-class SubdomainCommand extends AbstractCommand
+class SubdomainCommand extends AbstractCrudCommand
 {
 
     /**
@@ -26,10 +26,8 @@ class SubdomainCommand extends AbstractCommand
      */
     protected function configure()
     {
+        parent::configure();
         $this->setName('myracloud:api:subdomain');
-        $this->addOption('apiKey', 'k', InputOption::VALUE_REQUIRED, 'Api key to authenticate against Myra API.', null);
-        $this->addOption('secret', 's', InputOption::VALUE_REQUIRED, 'Secret to authenticate against Myra API.', null);
-        $this->addArgument('fqdn', InputArgument::REQUIRED, 'Subdomain that should be used.');
         $this->addArgument('key', InputArgument::OPTIONAL, 'Setting to write');
         $this->addArgument('value', InputArgument::OPTIONAL, 'Value to write');
         $this->setDescription('The Subdomain command allows you to list, and update the settings for a Subdomain.');

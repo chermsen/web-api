@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\API\Command
  */
-class DnsCommand extends AbstractCommand
+class DnsCommand extends AbstractCrudCommand
 {
     static $dnsTypes = [
         AbstractEndpoint::DNS_TYPE_A,

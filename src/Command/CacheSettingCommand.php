@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package Myracloud\API\Command
  */
-class CacheSettingCommand extends AbstractCommand
+class CacheSettingCommand extends AbstractCrudCommand
 {
 
     static $matchingTypes = [

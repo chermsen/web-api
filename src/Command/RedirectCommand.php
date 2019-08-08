@@ -10,7 +10,7 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RedirectCommand extends AbstractCommand
+class RedirectCommand extends AbstractCrudCommand
 {
 
     static $redirTypes = [

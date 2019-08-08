@@ -31,6 +31,20 @@ use 'php bin/console list' to list all supported command. Use --help for usage d
 
 Installation
 ------------
-via Composer:
-    
+Install Composer (https://getcomposer.org/download/)
+
+As Library via Composer:
+   
     composer require myra-security-gmbh/web-api
+    
+As CLI Client:
+
+    composer install --no-dev
+
+You can create a config.php file in the application root to save your access keys:
+    
+    <?php
+    $config = [
+        'apikey' => '##APIKEY##',
+        'secret' => '##SECRET##',
+    ];
