@@ -125,6 +125,11 @@ abstract class AbstractEndpoint
         return $this->handleResponse($res);
     }
 
+    public function getName()
+    {
+        return $this->epName;
+    }
+
     /**
      * @param $value
      * @throws \Exception

@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 abstract class AbstractCrudCommand extends AbstractCommand
 {
@@ -30,6 +31,10 @@ abstract class AbstractCrudCommand extends AbstractCommand
      */
     const OPERATION_UPDATE = 'update';
     /**
+     *
+     */
+    const OPERATION_EXPORT = 'export';
+    /**
      * @var array
      */
     static $operations = [
@@ -37,6 +42,7 @@ abstract class AbstractCrudCommand extends AbstractCommand
         self::OPERATION_CREATE,
         self::OPERATION_DELETE,
         self::OPERATION_LIST,
+        self::OPERATION_EXPORT,
     ];
 
     /**
@@ -78,6 +84,9 @@ abstract class AbstractCrudCommand extends AbstractCommand
                     break;
                 case self::OPERATION_DELETE:
                     $this->OpDelete($options, $output);
+                    break;
+                case self::OPERATION_EXPORT:
+                    $this->OpExport($options, $output);
                     break;
             }
         } catch (TransferException $e) {
@@ -179,6 +188,26 @@ abstract class AbstractCrudCommand extends AbstractCommand
         if ($output->isVerbose()) {
             print_r($return);
         }
+    }
+
+    /**
+     * @param array           $options
+     * @param OutputInterface $output
+     * @throws \Exception
+     */
+    protected function OpExport(array $options, OutputInterface $output)
+    {
+        $date     = new \DateTime();
+        $endpoint = $this->getEndpoint();
+        $return   = $endpoint->getList($options['fqdn'], $options['page']);
+        $this->checkResult($return, $output);
+        $yaml     = Yaml::dump($return['list']);
+        $header   = '# ' . $options['fqdn'] . "\n";
+        $header   .= '# ' . $endpoint->getName() . "\n";
+        $header   .= '# ' . $date->format('c') . "\n";
+        $filename = 'export_' . $endpoint->getName() . '_' . str_replace(':', '-', $options['fqdn']) . '_' . $date->format('Ymd_His') . '.yml';
+        file_put_contents($filename, $header . $yaml);
+        $output->writeln('Exported ' . count($return['list']) . ' entries to ' . $filename);
     }
 
     /**

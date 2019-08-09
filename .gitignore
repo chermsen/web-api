@@ -4,3 +4,4 @@
 /config.php
 /tests/Config.php
 /.vagrant
+/export_*
