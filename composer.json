@@ -14,7 +14,8 @@
         "ext-json"         : "*",
         "guzzlehttp/guzzle": "^6.0",
         "symfony/console"  : "^3.0",
-        "s1lentium/iptools": "*"
+        "s1lentium/iptools": "*",
+        "symfony/yaml"     : "*"
     },
     "require-dev"      : {
         "phpunit/phpunit": "^7.5"

@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 $script = <<-SCRIPT
-apt-get install -y curl git htop sudo
+apt-get install -y curl git htop sudo unzip
 apt-get install -y php7.2-cli php7.2-xml php7.2-curl php7.2-zip php7.2-mbstring php7.2-bcmath
 if [ ! -f /usr/local/bin/composer ]; then
     CURL=`which curl`; $CURL -sS https://getcomposer.org/installer > installer.php
