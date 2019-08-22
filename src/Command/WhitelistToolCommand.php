@@ -25,7 +25,7 @@ class WhitelistToolCommand extends AbstractCommand
         self::FORMAT_IPTABLES,
         self::FORMAT_IP6TABLES,
         self::FORMAT_IPSET,
-        # self::FORMAT_NFTABLES,
+        self::FORMAT_NFTABLES,
     ];
 
     /** @var WebApi */
@@ -53,6 +53,7 @@ bin/console myracloud:tools:gen-whitelist -f iptables
 iptables (only Ipv4)
 ip6tables (only Ipv6)
 ipset (Ipv4 and Ipv6)
+nftables (Ipv4 and Ipv6)
 TAG
         );
 
@@ -85,6 +86,9 @@ TAG
                     break;
                 case self::FORMAT_IPSET:
                     $output->writeln($this->renderIpset($data['list']));
+                    break;
+                case self::FORMAT_NFTABLES:
+                    $output->writeln($this->renderNFTSet($data['list']));
                     break;
             }
 
@@ -129,14 +133,14 @@ TAG
      */
     private function renderIpTables(array $data)
     {
-        $lines = [];
+        $lines = ['iptables -N myrawhite4'];
         foreach ($data as $entry) {
             $net = Network::parse($entry['network']);
             if ($entry['enabled'] && $net->getIP()->getVersion() == IP::IP_V4) {
-                $lines[] = '-A myrawhite4 -s ' . $entry['network'] . ' -j ACCEPT';
+                $lines[] = 'iptables -A myrawhite4 -s ' . $entry['network'] . ' -j ACCEPT';
             }
         }
-        $lines[] = '-A myrawhite4 -j RETURN';
+        $lines[] = 'iptables -A myrawhite4 -j RETURN';
         $lines[] = ' ';
 
         return $lines;
@@ -148,14 +152,14 @@ TAG
      */
     private function renderIp6Tables(array $data)
     {
-        $lines = [];
+        $lines = ['ip6tables -N myrawhite6'];
         foreach ($data as $entry) {
             $net = Network::parse($entry['network']);
             if ($entry['enabled'] && $net->getIP()->getVersion() == IP::IP_V6) {
-                $lines[] = '-A myrawhite6 -s ' . $entry['network'] . ' -j ACCEPT';
+                $lines[] = 'ip6tables -A myrawhite6 -s ' . $entry['network'] . ' -j ACCEPT';
             }
         }
-        $lines[] = '-A myrawhite6 -j RETURN';
+        $lines[] = 'ip6tables -A myrawhite6 -j RETURN';
         $lines[] = ' ';
 
         return $lines;
@@ -167,10 +171,8 @@ TAG
      */
     private function renderIpSet(array $data)
     {
-        $v4   = [];
-        $v6   = [];
-        $v4[] = 'create -exist myrawhite4 hash:net family inet hashsize 1024 maxelem 65536 comment';
-        $v6[] = 'create -exist myrawhite6 hash:net family inet6 hashsize 1024 maxelem 65536 comment';
+        $v4 = ['create -exist myrawhite4 hash:net family inet hashsize 1024 maxelem 65536 comment'];
+        $v6 = ['create -exist myrawhite6 hash:net family inet6 hashsize 1024 maxelem 65536 comment'];
         foreach ($data as $entry) {
             $net = Network::parse($entry['network']);
             if ($entry['enabled']) {
@@ -182,6 +184,33 @@ TAG
                 }
             }
         }
+
+        $lines = array_merge($v4, [''], $v6);
+
+        return $lines;
+    }
+
+    private function renderNFTSet(array $data)
+    {
+
+        $v4   = ['nft add table ip filter'];
+        $v4[] = 'nft add chain ip filter myrawhite4';
+        $v6   = ['nft add table ip6 filter'];
+        $v6[] = 'nft add chain ip6 filter myrawhite6';
+        foreach ($data as $entry) {
+            $net = Network::parse($entry['network']);
+            if ($entry['enabled']) {
+                if ($net->getIP()->getVersion() == IP::IP_V4) {
+                    $v4[] = 'nft add rule ip filter myrawhite4 ip saddr ' . $entry['network'] . ' counter accept';
+                }
+                if ($net->getIP()->getVersion() == IP::IP_V6) {
+                    $v6[] = 'nft add rule ip6 filter myrawhite6 ip6 saddr ' . $entry['network'] . ' counter accept';
+                }
+            }
+        }
+
+        $v4[] = 'nft add rule ip filter myrawhite4 counter return';
+        $v6[] = 'nft add rule ip6 filter myrawhite6 counter return';
 
         $lines = array_merge($v4, [''], $v6);
 
