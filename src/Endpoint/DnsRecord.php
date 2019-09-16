@@ -66,6 +66,7 @@ class DnsRecord extends AbstractEndpoint
      * @param string $recordType
      * @param bool   $active
      * @param null   $sslCertTemplate
+     * @param bool   $enabled
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -76,7 +77,8 @@ class DnsRecord extends AbstractEndpoint
         $ttl,
         $recordType = 'A',
         $active = true,
-        $sslCertTemplate = null
+        $sslCertTemplate = null,
+        $enabled = true
     ) {
         $uri = $this->uri . '/' . $domain;
 
@@ -90,6 +92,7 @@ class DnsRecord extends AbstractEndpoint
                 'ttl'        => $ttl,
                 'recordType' => $recordType,
                 'active'     => $active,
+                'enabled'    => $enabled,
             ];
 
         if ($sslCertTemplate != null) {
@@ -111,6 +114,7 @@ class DnsRecord extends AbstractEndpoint
      * @param string    $recordType
      * @param bool      $active
      * @param null      $sslCertTemplate
+     * @param bool      $enabled
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -123,7 +127,8 @@ class DnsRecord extends AbstractEndpoint
         $ttl,
         $recordType = 'A',
         $active = true,
-        $sslCertTemplate = null
+        $sslCertTemplate = null,
+        $enabled = true
     ) {
 
         $uri = $this->uri . '/' . $domain;
@@ -139,6 +144,7 @@ class DnsRecord extends AbstractEndpoint
                 'ttl'        => $ttl,
                 'recordType' => $recordType,
                 'active'     => $active,
+                'enabled'    => $enabled,
             ];
         if ($sslCertTemplate != null) {
             $options[RequestOptions::JSON]['sslCertTemplate'] = $sslCertTemplate;

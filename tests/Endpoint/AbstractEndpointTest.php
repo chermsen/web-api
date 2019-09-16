@@ -62,7 +62,7 @@ abstract class AbstractEndpointTest extends TestCase
     {
         $this->assertIsArray($result);
         $this->assertArrayHasKey('error', $result);
-        $this->assertEquals(false, $result['error'], 'Result contained Error Flag.');
+        $this->assertEquals(false, $result['error'], 'Result contained Error Flag.' . var_export($result, true));
     }
 
     /**

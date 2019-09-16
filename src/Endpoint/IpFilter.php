@@ -19,24 +19,27 @@ class IpFilter extends AbstractEndpoint
     protected $epName = 'ipfilter';
 
     /**
-     * @param $domain
-     * @param $type
-     * @param $value
+     * @param      $domain
+     * @param      $type
+     * @param      $value
+     * @param bool $enabled
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function create(
         $domain,
         $type,
-        $value
+        $value,
+        $enabled = true
     ) {
         $uri = $this->uri . '/' . $domain;
 
         $this->validateIpfilterType($type);
         $options[RequestOptions::JSON] =
             [
-                'type'  => $type,
-                'value' => $value,
+                'type'    => $type,
+                'value'   => $value,
+                'enabled' => $enabled,
             ];
 
 

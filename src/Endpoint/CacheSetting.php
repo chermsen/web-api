@@ -22,6 +22,7 @@ class CacheSetting extends AbstractEndpoint
      * @param        $path
      * @param        $ttl
      * @param string $type
+     * @param bool   $enabled
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -29,7 +30,8 @@ class CacheSetting extends AbstractEndpoint
         $domain,
         $path,
         $ttl,
-        $type = self::MATCHING_TYPE_PREFIX
+        $type = self::MATCHING_TYPE_PREFIX,
+        $enabled = true
     ) {
         $uri = $this->uri . '/' . $domain;
 
@@ -38,9 +40,10 @@ class CacheSetting extends AbstractEndpoint
 
         $options[RequestOptions::JSON] =
             [
-                "path" => $path,
-                "ttl"  => $ttl,
-                "type" => $type,
+                "path"    => $path,
+                "ttl"     => $ttl,
+                "type"    => $type,
+                "enabled" => $enabled,
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
@@ -56,6 +59,7 @@ class CacheSetting extends AbstractEndpoint
      * @param           $path
      * @param           $ttl
      * @param string    $type
+     * @param bool      $enabled
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -65,7 +69,8 @@ class CacheSetting extends AbstractEndpoint
         \DateTime $modified,
         $path,
         $ttl,
-        $type = self::MATCHING_TYPE_PREFIX
+        $type = self::MATCHING_TYPE_PREFIX,
+        $enabled = true
     ) {
 
         $uri = $this->uri . '/' . $domain;
@@ -79,6 +84,7 @@ class CacheSetting extends AbstractEndpoint
                 "path"     => $path,
                 "ttl"      => $ttl,
                 "type"     => $type,
+                "enabled"  => $enabled,
             ];
 
         /** @var \GuzzleHttp\Psr7\Response $res */
