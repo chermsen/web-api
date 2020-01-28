@@ -4,7 +4,7 @@ Myra PHP Web API Client
 What is this?
 -------------
 
-This Library implements a minimal API layer on top of guzzlehttp/guzzle to access the Myracloud Web API.
+This library implements a minimal API layer on top of guzzlehttp/guzzle to access the Myra Web API.
 
 You can either use the WebApi Class to access a number of predefined endpoints or use the Signature Middleware with 
 your own GuzzleHttp/Guzzle instance, to transparently handle authentication and signing of requests.
